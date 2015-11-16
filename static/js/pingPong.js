@@ -3,9 +3,6 @@ var canvas = document.createElement("canvas");
 var context = canvas.getContext("2d");
 canvas.width = 450;
 canvas.height = 350;
-var div = document.getElementById('pingPong');
-div.appendChild(canvas);
-div.appendChild(document.createElement("br"));
 
 //Game components (speed is in px per sec)
 var aiAccuracy = 1.15; //how far ahead predictions are for the AI
@@ -47,6 +44,12 @@ aiBall = {
 	x: -1, 
 	y: -1
 };
+
+function createPingPongWindow() {
+	var div = document.getElementById('pingPong');
+	div.appendChild(canvas);
+	div.appendChild(document.createElement("br"));
+}
 
 function initState ()
 {

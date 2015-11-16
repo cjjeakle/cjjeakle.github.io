@@ -34,7 +34,7 @@ function loadPageContent(pagePath) {
 }
 
 function applyPageContent() {
-    var contentDiv = document.getelementById('content');
+    var contentDiv = document.getElementById('content');
     contentDiv.innerHTML = this.responseText;
 }
 

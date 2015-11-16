@@ -1,7 +1,9 @@
-function setPageContent() {
-    var pageDataPath = 'pagedata/'
-    var pageParamName = 'page';
+var pageDataPath = 'pagedata/'
+var pageParamName = 'page';
+var defaultPageName = 'welcome';
 
+
+function setPageContent() {
     var ignoreSeparatingCharactersRegex = '[?&;]';
     var captureParamNameRegex = '(.+?)';
     var ignoreEquealsSignRegex = '[=]';
@@ -21,7 +23,11 @@ function setPageContent() {
         queries[values[1]] = values[2];
     }
 
-    loadPageContent(pageDataPath + queries[pageParamName]);
+    var pageName = queries[pageParamName];
+    if (!pageName) {
+        pageName = defaultPageName;
+    }
+    loadPageContent(pageDataPath + pageName);
 }
 
 function loadPageContent(pagePath) {

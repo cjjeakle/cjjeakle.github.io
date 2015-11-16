@@ -91,5 +91,3 @@ function setStyleByClass(objClass, style)
     }
 }
 
-setPageContent();
-

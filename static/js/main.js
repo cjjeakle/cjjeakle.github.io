@@ -1,9 +1,10 @@
 var pageDataPath = 'pagedata/'
 var pageParamName = 'page';
+
 var defaultPageName = 'welcome';
+var pingPongPageName = 'pingpong';
 
-
-function setPageContent() {
+function getUrlSearchParam(paramName) {
     var ignoreSeparatingCharactersRegex = '[?&;]';
     var captureParamNameRegex = '(.+?)';
     var ignoreEquealsSignRegex = '[=]';
@@ -23,11 +24,21 @@ function setPageContent() {
         queries[values[1]] = values[2];
     }
 
-    var pageName = queries[pageParamName];
+    return queries[paramName];
+}
+
+function getPageName() {
+    var pageName = getUrlSearchParam(pageParamName);
+    
     if (!pageName) {
         pageName = defaultPageName;
     }
-    loadPageContent(pageDataPath + pageName);
+
+    return pageName;
+}
+
+function setPageContent() {
+    loadPageContent(pageDataPath + getPageName());
 }
 
 function loadPageContent(pagePath) {
@@ -42,8 +53,19 @@ function loadPageContent(pagePath) {
 function applyPageContent() {
     var contentDiv = document.getElementById('content');
     contentDiv.innerHTML = this.responseText;
+    emulateOnLoad();
 }
 
+function emulateOnLoad() {
+    curPage = getPageName();
+    switch(curPage){
+        case pingPongPageName:
+            createPingPongWindow();
+            break;
+        defult:
+            break;
+    }
+}
 
 function findByClass(className, tagName) {
     if (tagName == null)

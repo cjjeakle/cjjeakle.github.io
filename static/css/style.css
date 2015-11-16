@@ -1,0 +1,102 @@
+body {
+  background-color:#fff;
+  line-height: 1.6em;
+}
+
+#titleImg {
+	margin-right: 15px;
+	float: left; 
+}
+
+#titleImg img {
+	height: 90px;
+}
+
+#titleText {
+	display: inline-block;
+	float: bottom;
+	text-align: left;
+	height:auto;
+	width: auto;
+	margin-top: 1em;
+	margin-bottom: 0em;
+}
+
+#titleText h2{
+	 line-height:0%;
+}
+
+#titleInfo {
+	line-height: 1.6em;
+}
+
+.filler {
+	clear: both;
+	margin-bottom: 10px;
+}
+	
+.container img {
+	width: 200px;
+}
+
+.container {
+	line-height: 1.6em;
+}
+
+.small-12 #nav {
+	border-left:1px solid #666767;
+	margin-left: 1em;
+	padding-left: 0;
+	text-indent: 20px;
+	text-align: left;
+}
+
+.small-12 #nav ul {
+	text-align: left;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	list-style-type:none;
+}
+
+.large-3 #nav {
+	border-right:1px solid #666767;
+	padding-right: 1em;
+	float:right;
+	text-align: right;
+}
+
+.large-3 #nav ul {
+	text-align: right;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	list-style-type:none;
+}
+
+#nav a {
+	text-decoration:none;
+	color:#666767;
+	outline:none;
+	line-height: 200%;
+}
+
+#nav a:hover {
+	color:#000;
+}
+
+
+#content {
+	float: left;
+	text-align: left;
+	font-size:85%;
+}
+
+#content a {
+  color:blue;
+}
+
+canvas {
+	border: 1px solid;
+}
+
+
+

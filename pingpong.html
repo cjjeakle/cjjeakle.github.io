@@ -1,0 +1,28 @@
+---
+layout: default
+---
+
+<script src="js/requestNextAnimationFrame.js" type="text/javascript"></script>
+<script src="js/pingPong.js" type="text/javascript"></script>
+<h3>Ping-Pong</h3>
+<div style="font-size: 90%; line-height: 125%;">
+  <p>
+    Use the up and down arrow keys or the mouse to control the left paddle
+    <br/>
+    (Touch device users should be able to tap where they want the paddle to move)
+  </p>
+</div>
+<div id="pingPong" style="display:inline-block;"></div>
+<div style="width = 500px; text-align:center;">
+  <div style="display:inline-block;" class="center"><a href="javascript:initPingPong();" id="startBtn" style="display:inherit;" class="btn">Play!</a>
+    <div style="display:none;" class="hidden"><a href="javascript:initState();" id="playBtn" class="btn">Reset</a>&nbsp; &nbsp &nbsp
+      <a href="javascript:setPingPongDifficulty(&quot;easy&quot;);" class="btn">Easy</a>&nbsp
+      <a href="javascript:setPingPongDifficulty(&quot;medium&quot;);" class="btn">Medium</a>&nbsp
+      <a href="javascript:setPingPongDifficulty(&quot;hard&quot;);" class="btn">Hard</a>&nbsp; &nbsp &nbsp
+      <a href="javascript:pausePingPong();" id="pauseBtn" class="btn">Pause</a>
+    </div>
+  </div>
+  <div style="display:none;" id="resetNotification">Reset to apply difficulty changes</div>
+</div>
+<br/>
+<a href="https://github.com/cjjeakle/personal-site/blob/master/static/js/pingPong.js" target="_blank">Check out the implementation on my github.</a>

@@ -1,0 +1,53 @@
+.sudoku {
+	display: inline-block;
+}
+.board {
+	float:left;
+	border: 0px;
+	width: 2em;
+	height: 2em;
+	text-align:center;
+}
+.table {
+	text-align:center;
+	border-collapse:collapse;
+}
+.cell{
+	width: 2em;
+	height: 2em;
+	border-left: 1px solid;
+	border-top: 1px solid;
+	padding: 0.1em;
+}
+.boldT {
+	border-top: 2px solid;
+}
+.boldL {
+	border-left: 2px solid;
+}
+.plainB {
+	border-bottom: 1px solid;
+}
+.plainR {
+	border-right: 1px solid;
+}
+#content .btn {
+	font-size: 1.3em;
+	cursor: pointer;
+	overflow: hidden;
+	background: #CCC;
+	color: #000;
+	border-radius: 2px;
+	padding: 0.10em .25em;
+	border: 1px solid transparent;
+}
+#content .btn:hover {
+	border-color: rgba( 0, 0, 0, 0.85 );
+	background: #777;
+}
+.center {
+	padding-top: .5em;
+	float: center;
+	text-align: center;
+}
+

@@ -1,6 +1,10 @@
 /**
  * Overrides
  */
+body {
+    font-family: "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 br {
     line-height: 75%;
 }

@@ -1,4 +1,4 @@
-//Canvas creation and configuration
+// Canvas creation and configuration
 var canvas = document.createElement("canvas");
 var context = canvas.getContext("2d");
 canvas.style.border = '1px solid';
@@ -6,14 +6,14 @@ canvas.width = 450;
 canvas.height = 350;
 
 // Game components (speed is in px per sec)
-var aiAccuracy = 1.15; //how far ahead predictions are for the AI
-var aiSpeed = 115; //the speed of the AI's paddle movement
-var playerSpeed = 192; //the speed of the player's paddle
-var ballYSpeed = 128; //the default ball speed
-var prev = 0; //the previous value of time from "requestNextAnimationFrame()"
-var paused = false; //whether or not the game is paused
+var aiAccuracy; //how far ahead predictions are for the AI
+var aiSpeed; //the speed of the AI's paddle movement
+var playerSpeed; //the speed of the player's paddle
+var ballYSpeed; //the default ball speed
+var prev; //the previous value of time from "requestNextAnimationFrame()"
+var paused; //whether or not the game is paused
 
-
+// Paddle and ball objects
 score = 0;
 left = { 
 	Speed: 0, 
@@ -46,42 +46,46 @@ aiBall = {
 	y: -1
 };
 
-// Create a div with 'pingPong' as it's ID
-// Once that div is loaded, call this function to generate a ping pong table
-function createPingPong() {
-	var div = document.getElementById('pingPong');
-	div.appendChild(canvas);
-	div.appendChild(document.createElement("br"));
-}
 
+
+// Places game objects at their initial location and applies the default difficulty.
 function initState(){
 	score = 0;
-	left.speed = playerSpeed;
+
 	left.width = 10;
 	left.height = 50;
 	left.x = 0;
 	left.y = 0,
 	
-	right.speed = aiSpeed;
 	right.width = 10;
 	right.height = 50;
 	right.x = canvas.width - 10;
 	right.y = 0;
 	
 	ball.xSpeed = 128;
-	ball.ySpeed = ballYSpeed;
 	ball.width = 15;
 	ball.height = 15;
 	ball.x = left.width;
 	ball.y = canvas.height / 2;
 
-	aiBall.xSpeed = (ball.xSpeed * aiAccuracy);
-	aiBall.ySpeed = (ball.ySpeed * aiAccuracy);
 	aiBall.width = ball.width;
 	aiBall.height = ball.height;
 	aiBall.x = left.width;
 	aiBall.y = canvas.height / 2;
+
+	applyCurrentDifficulty();
 }
+
+// Applies the current difficulty stored in the corresponding globals.
+function applyCurrentDifficulty() {
+	left.speed = playerSpeed;
+	right.speed = aiSpeed;
+	ball.ySpeed = ballYSpeed;
+	aiBall.xSpeed = (ball.xSpeed * aiAccuracy);
+	aiBall.ySpeed = (ball.ySpeed * aiAccuracy);
+}
+
+
 
 //Watch for keyboard input
 var up = false, dn = false;
@@ -129,6 +133,8 @@ canvas.addEventListener("mouseout", function (e) {
 	mouse = false;
 }, false);
 
+
+
 //Update game objects
 function update(seconds) {
 	if (!seconds)
@@ -146,7 +152,7 @@ function update(seconds) {
 	aiBall.x += aiBall.xSpeed * seconds;
 	aiBall.y += aiBall.ySpeed * seconds;
 
-	//Use keyboard and mouse input
+	//use keyboard and mouse input
 	if (up || (mouse && mouseY < left.y + left.height / 2)) {
 		left.y -= left.speed * seconds;
 		if (left.y < 0)
@@ -167,7 +173,7 @@ function update(seconds) {
 	collisions(ball);
 	collisions(aiBall);
 
-	//Scoring
+	//scoring
 	if (ball.x <= 0)
 	{
 		score -= 1;
@@ -186,6 +192,8 @@ function update(seconds) {
 		refreshAi();
 	}
 }
+
+
 
 //simulate AI by predicting where the ball will be
 function refreshAi()
@@ -222,6 +230,8 @@ function simulateAi(seconds)
 	}
 }
 
+
+// Detect paddle collisions and bounce the ball back.
 function collisions(inputBall)
 {
 	//Paddle Collisions
@@ -283,7 +293,9 @@ function collisions(inputBall)
 	return inputBall;
 }
 
-//Draw everything
+
+
+// Draw everything
 function draw() {
 	//Clear the canvas for the next drawing cycle
 	context.clearRect(0, 0, canvas.width, canvas.height);	
@@ -334,7 +346,7 @@ function draw() {
 	context.fillText("Score: " + score, canvas.width / 2.02, 0);
 }
 
-//Game driving function
+// Game driving function
 function pingPong(time)
 {
 	var timer = time - prev;
@@ -348,28 +360,51 @@ function pingPong(time)
 	requestNextAnimationFrame(pingPong);
 }
 
-//Run the game
-function initPingPong()
-{
-	document.getElementById('startBtn').style.display = 'none';
-	setStyleByClass('hidden', 'display:inherit;');
-	requestNextAnimationFrame(getStartTime);
-}
-
-//Get the first value of time, since it is entirely unknown until supplied
+// Get the first value of time, since it is unknown until supplied
+// This is a wrapper around the 'pingPong' function
 function getStartTime(time)
 {
 	prev = time;
 	requestNextAnimationFrame(pingPong);
 }
 
+
+/////////// Interface used in DOM ///////////
+
+// Create a div with 'pingPong' as it's ID
+// Once that div is loaded, call this function to generate a ping pong table
+function createPingPong() {
+	var div = document.getElementById('pingPong');
+	div.appendChild(canvas);
+	div.appendChild(document.createElement("br"));
+}
+
+// Start the game
+function startPingPong()
+{
+	document.getElementById('startBtn').style.display = 'none';
+	setStyleByClass('hidden', 'display:inherit;');
+	requestNextAnimationFrame(getStartTime);
+}
+
+// Resets the game
+function resetPingPong()
+{
+	initState();
+	if (paused)
+	{
+		togglePingPongPause();
+	}
+}
+
+// Sets the game's difficulty
 function setPingPongDifficulty(diff)
 {
 	if (diff == 'easy')
 	{
 		aiAccuracy = 1.0;
 		aiSpeed = 100;
-		playerSpeed = 256;
+		playerSpeed = 1024;
 		ballYSpeed = 96;
 	}
 	else if (diff == 'medium')
@@ -386,10 +421,12 @@ function setPingPongDifficulty(diff)
 		playerSpeed = 128;
 		ballYSpeed = 255;
 	}
-	document.getElementById('resetNotification').style.display = 'inherit';
+
+	applyCurrentDifficulty();
 }
 
-function pausePingPong()
+// Pauses and un-pauses the game
+function togglePingPongPause()
 {
 	paused = !paused;
 	if (paused)
@@ -401,8 +438,9 @@ function pausePingPong()
 		document.getElementById('pauseBtn').innerHTML = '&nbsp;Pause&nbsp;';
 	}
 }
-	
-//run one iteration of the game to display its starting state
+
+// Run one iteration of the game to display its starting state
+setPingPongDifficulty('medium');
 initState();
 update(0);
 draw();

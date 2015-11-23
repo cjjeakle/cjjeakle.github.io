@@ -1,5 +1,5 @@
 # Site settings
-title: Chris Jeakle | Home
+title: Chris Jeakle
 email: cjjeakle@umich.edu
 description: > # this means to ignore newlines until "baseurl:"
   Christopher Jeakle's web site. Check out what I am up to and the things I am working on.
@@ -9,3 +9,6 @@ github_username:  cjjeakle
 
 # Build settings
 markdown: kramdown
+
+# Compilation settings
+permalink: pretty

@@ -4,34 +4,30 @@
   {% include head.html %}
 
   <body>
-
-    {% include header.html %}
-
     <div class="container">
-      
-      {% include navigation.html %}
-      
       <div class="row">
-        <div class="container">
-          
-          <div class="large-7 small-12 columns">
-            <div id="content">
-              {{ content }}
-            </div>
-          </div>
-          <div class="large-2 small-12 columns">&nbsp;</div>
+        <div class="two columns">
+          &nbsp;
+        </div>
+        <div class="nine columns">
+          {% include header.html %}
         </div>
       </div>
 
-      <div class="page-content">
-        <div class="wrapper">
-          
+      <div class="content row">
+        <div class="row">
+          <br/>
+        </div>
+        <div class="two columns">
+          {% include navigation.html %}
+        </div>
+        <div class="nine columns">
+          {{ content }}
         </div>
       </div>
-    
+
+      {% include footer.html %}
     </div>
-    {% include footer.html %}
-
   </body>
 
 </html>

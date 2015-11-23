@@ -1,13 +1,11 @@
-//Canvas
+//Canvas creation and configuration
 var canvas = document.createElement("canvas");
 var context = canvas.getContext("2d");
+canvas.style.border = '1px solid';
 canvas.width = 450;
 canvas.height = 350;
-var div = document.getElementById('pingPong');
-div.appendChild(canvas);
-div.appendChild(document.createElement("br"));
 
-//Game components (speed is in px per sec)
+// Game components (speed is in px per sec)
 var aiAccuracy = 1.15; //how far ahead predictions are for the AI
 var aiSpeed = 115; //the speed of the AI's paddle movement
 var playerSpeed = 192; //the speed of the player's paddle
@@ -48,14 +46,15 @@ aiBall = {
 	y: -1
 };
 
-function initState ()
-{
-	//ensure reset notification exists (as this function is used
-	//before it is rendered to initilize vars, as well as for resetting)
-	if (document.getElementById('resetNotification'))
-	{
-		document.getElementById('resetNotification').style.display = 'none';
-	}
+// Create a div with 'pingPong' as it's ID
+// Once that div is loaded, call this function to generate a ping pong table
+function createPingPong() {
+	var div = document.getElementById('pingPong');
+	div.appendChild(canvas);
+	div.appendChild(document.createElement("br"));
+}
+
+function initState(){
 	score = 0;
 	left.speed = playerSpeed;
 	left.width = 10;
@@ -131,7 +130,7 @@ canvas.addEventListener("mouseout", function (e) {
 }, false);
 
 //Update game objects
-function update (seconds) {
+function update(seconds) {
 	if (!seconds)
 	{
 		//there are glitches where a browser can feed in a null time,
@@ -223,7 +222,7 @@ function simulateAi(seconds)
 	}
 }
 
-function collisions (inputBall)
+function collisions(inputBall)
 {
 	//Paddle Collisions
 	if ((inputBall.x < left.width && (inputBall.y + inputBall.height > left.y) && 
@@ -285,7 +284,7 @@ function collisions (inputBall)
 }
 
 //Draw everything
-function draw () {
+function draw() {
 	//Clear the canvas for the next drawing cycle
 	context.clearRect(0, 0, canvas.width, canvas.height);	
 	
@@ -358,7 +357,7 @@ function initPingPong()
 }
 
 //Get the first value of time, since it is entirely unknown until supplied
-function getStartTime (time)
+function getStartTime(time)
 {
 	prev = time;
 	requestNextAnimationFrame(pingPong);
@@ -390,16 +389,16 @@ function setPingPongDifficulty(diff)
 	document.getElementById('resetNotification').style.display = 'inherit';
 }
 
-function pausePingPong ()
+function pausePingPong()
 {
 	paused = !paused;
 	if (paused)
 	{
-		document.getElementById('pauseBtn').innerHTML = 'Resume';
+		document.getElementById('pauseBtn').innerHTML = '&nbsp;Resume&nbsp;';
 	}
 	else
 	{
-		document.getElementById('pauseBtn').innerHTML = 'Pause';
+		document.getElementById('pauseBtn').innerHTML = '&nbsp;Pause&nbsp;';
 	}
 }
 	

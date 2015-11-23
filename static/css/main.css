@@ -1,18 +1,83 @@
-body {
-  background-color:#fff;
-  line-height: 1.6em;
+/**
+ * Overrides
+ */
+br {
+    line-height: 75%;
 }
 
-#titleImg {
+
+/**
+ * Utilities
+ */
+.min-width {
+    display: inline-block;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+
+
+/**
+ * header
+ */
+.header {
+    border-top: 5px solid darkGray;
+    border-bottom: 1px solid lightGray;
+}
+
+
+
+/**
+ * footer
+ */
+.footer {
+    //border-top: 1px solid lightGray;
+}
+
+
+/**
+ * Buttons
+ */
+.btn {
+    text-decoration: none;
+    font-size: 1.3em;
+    cursor: pointer;
+    overflow: hidden;
+    background: #CCC;
+    color: #000;
+    border-radius: 2px;
+    padding: 0.00em 0.10em 0.10em 0.10em;
+    border: 1px solid transparent;
+}
+
+.btn:hover {
+    color: #000;
+    border-color: rgba( 0, 0, 0, 0.85 );
+    background: #777;
+}
+
+.center {
+    float: center;
+    text-align: center;
+}
+
+
+
+/**
+ * Header
+ */
+#headerImg {
     margin-right: 15px;
     float: left; 
 }
 
-#titleImg img {
+#headerImg img {
     height: 90px;
 }
 
-#titleText {
+#headerText {
     display: inline-block;
     float: bottom;
     text-align: left;
@@ -22,78 +87,39 @@ body {
     margin-bottom: 0em;
 }
 
-#titleText h2{
+#headerText h2{
      line-height:0%;
 }
 
-#titleInfo {
+#headerDetails {
     line-height: 1.6em;
 }
 
-.filler {
-    clear: both;
-    margin-bottom: 10px;
-}
-    
-.container img {
-    width: 200px;
-}
 
-.container {
-    line-height: 1.6em;
-}
 
-.small-12 #nav {
-    border-left:1px solid #666767;
-    margin-left: 1em;
-    padding-left: 0;
-    text-indent: 20px;
-    text-align: left;
-}
-
-.small-12 #nav ul {
-    text-align: left;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    list-style-type:none;
-}
-
-.large-3 #nav {
+/**
+ * Navigation Menu
+ */
+#navigation {
     border-right:1px solid #666767;
     padding-right: 1em;
-    float:right;
     text-align: right;
 }
 
-.large-3 #nav ul {
+#navigation ul {
     text-align: right;
     margin-top: 0px;
     margin-bottom: 0px;
     list-style-type:none;
 }
 
-#nav a {
+#navigation a {
     text-decoration:none;
     color:#666767;
     outline:none;
     line-height: 200%;
 }
 
-#nav a:hover {
+#navigation a:hover {
     color:#000;
-}
-
-
-#content {
-    float: left;
-    text-align: left;
-    font-size:85%;
-}
-
-#content a {
-  color:blue;
-}
-
-canvas {
-    border: 1px solid;
 }

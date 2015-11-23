@@ -1,0 +1,35 @@
+---
+title: Chris Jeakle | About
+layout: default
+---
+
+<script src="{{ '/static/js/requestNextAnimationFrame.js' | prepend: site.baseurl }}" type="text/javascript"></script>
+<script src="{{ '/static/js/pingPong.js' | prepend: site.baseurl }}" type="text/javascript"></script>
+<h3>Ping-Pong</h3>
+<div style="font-size: 90%; line-height: 125%;">
+  <p>
+    Use the up and down arrow keys or the mouse to control the left paddle
+    <br/>
+    (Touch device users should be able to tap where they want the paddle to move)
+  </p>
+</div>
+<div class="min-width">
+  <div id="pingPong"></div>
+  <div style="width = 500px; text-align:center;">
+    <div style="display:inline-block;" class="center"><a href="javascript:initPingPong();" id="startBtn" style="display:inherit;" class="btn">&nbsp;Play!&nbsp;</a>
+      <div style="display:none;" class="hidden"><a href="javascript:initState();" id="playBtn" class="btn">&nbsp;Reset&nbsp;</a>&nbsp; &nbsp &nbsp
+        <a href="javascript:setPingPongDifficulty('easy');" class="btn">&nbsp;Easy&nbsp;</a>&nbsp
+        <a href="javascript:setPingPongDifficulty('medium');" class="btn">&nbsp;Medium&nbsp;</a>&nbsp
+        <a href="javascript:setPingPongDifficulty('hard');" class="btn">&nbsp;Hard&nbsp;</a>&nbsp; &nbsp &nbsp
+        <a href="javascript:pausePingPong();" id="pauseBtn" class="btn">&nbsp;Pause&nbsp;</a>
+      </div>
+    </div>
+    <div style="display:none;" id="resetNotification">Reset to apply difficulty changes</div>
+  </div>
+</div>
+<br/>
+<script>
+  // Create the ping pong table after all required DOM nodes are loaded.
+  createPingPong();
+</script>
+<a href="{{ '/static/js/pingPong.js' | prepend: site.baseurl }}" target="_blank">Click here or view source to check out the implementation.</a>

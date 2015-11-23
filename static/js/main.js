@@ -20,25 +20,6 @@ function findByClass(className, domNode, tagName) {
 	return elts;
 }
 
-function toggleShow(obj)
-{
-	titles = findByClass('navHeader', null, null);
-	elts = findByClass(obj, null, 'div');
-	for (i = 0; i < elts.length; i++)
-	{	
-		if (titles[i].innerHTML == "Navigation ►")
-		{
-			titles[i].innerHTML = "Navigation &#9660";
-			elts[i].style.display = "inherit";
-		}
-		else
-		{
-			titles[i].innerHTML = "Navigation &#9658"
-			elts[i].style.display = "none";
-		}
-	}
-}
-
 function setStyleByClass(objClass, style)
 {
 	elts = findByClass(objClass, null, null);

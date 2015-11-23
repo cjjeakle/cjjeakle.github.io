@@ -9,7 +9,8 @@ canvas.height = 350;
 var aiAccuracy; //how far ahead predictions are for the AI
 var aiSpeed; //the speed of the AI's paddle movement
 var playerSpeed; //the speed of the player's paddle
-var ballYSpeed; //the default ball speed
+var ballXSpeed; //the chosen ball speed on the X axis
+var ballYSpeed; //the chosen ball speed on the Y axis
 var prev; //the previous value of time from "requestNextAnimationFrame()"
 var paused; //whether or not the game is paused
 
@@ -62,7 +63,6 @@ function initState(){
 	right.x = canvas.width - 10;
 	right.y = 0;
 	
-	ball.xSpeed = 128;
 	ball.width = 15;
 	ball.height = 15;
 	ball.x = left.width;
@@ -80,7 +80,10 @@ function initState(){
 function applyCurrentDifficulty() {
 	left.speed = playerSpeed;
 	right.speed = aiSpeed;
+
+	ball.xSpeed = ballXSpeed;
 	ball.ySpeed = ballYSpeed;
+	
 	aiBall.xSpeed = (ball.xSpeed * aiAccuracy);
 	aiBall.ySpeed = (ball.ySpeed * aiAccuracy);
 }
@@ -400,6 +403,8 @@ function resetPingPong()
 // Sets the game's difficulty
 function setPingPongDifficulty(diff)
 {
+	ballXSpeed = 128;
+
 	if (diff == 'easy')
 	{
 		aiAccuracy = 1.0;
@@ -420,6 +425,13 @@ function setPingPongDifficulty(diff)
 		aiSpeed = 130;
 		playerSpeed = 128;
 		ballYSpeed = 255;
+	}
+
+	if (ball.xSpeed < 0) {
+		ballXSpeed *= -1;
+	}
+	if (ball.ySpeed < 0) {
+		ballYSpeed *= -1;
 	}
 
 	applyCurrentDifficulty();

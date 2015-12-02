@@ -1,463 +1,587 @@
-// Canvas creation and configuration
+// Note: Coordinates are from the top left, eg:
+/*
+
+  0 ____\ x = n
+  |     /
+  |
+ \ /
+y = n
+
+*/
+
+// Create canvas
 var canvas = document.createElement("canvas");
 var context = canvas.getContext("2d");
-canvas.style.border = '1px solid';
-canvas.width = 450;
-canvas.height = 350;
 
-// Game components (speed is in px per sec)
-var aiAccuracy; //how far ahead predictions are for the AI
-var aiSpeed; //the speed of the AI's paddle movement
-var playerSpeed; //the speed of the player's paddle
-var ballXSpeed; //the chosen ball speed on the X axis
-var ballYSpeed; //the chosen ball speed on the Y axis
-var prev; //the previous value of time from "requestNextAnimationFrame()"
-var paused; //whether or not the game is paused
+// Game state variables (speed is in px per sec)
+var debug = false;  //whether any debug tools should be enabled
+var prev = 0;       //the previous value of time from "requestNextAnimationFrame()"
+var paused = false; //whether or not the game is paused
+var up = false;     //whether the up arrow is currently pressed
+var dn = false;     //whether the down arrow is currently pressed
+var mouse = false;  //whether mouse input is being provided
+var mouseY = 0;     //the current mouse y-index in the canvas
+var initialBallXSpeed; //the x-axis speed to apply to the ball when serving
+var initialBallYSpeed; //the y-axis speed to apply to the ball when serving
 
 // Paddle and ball objects
-score = 0;
-left = { 
-	Speed: 0, 
-	width: -1, 
-	height: -1, 
-	x: -1, 
-	y: -1
+// Initialized with nonsense values
+var score = 0;
+var left = {
+    Speed: 0,
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+    getMidpoint: function() { return left.y + left.height / 2; },
+    getTop: function() { return this.y; },
+    getBottom: function() { return this.y + this.height; },
+    getLeft: function() { return this.x; },
+    getRight: function() { return this.x + this.width; },
+    isPastHorizontalThreshold: function(inputBall) { return inputBall.getLeft() < this.getRight(); },
+    isWithinVerticalRange: function(inputBall) { return (inputBall.getTop() <= this.getBottom()) && (inputBall.getBottom() >= this.getTop()); }
 };
-right = { 
-	Speed: 0, 
-	width: -1, 
-	height: -1, 
-	x: -1, 
-	y: -1
+var right = {
+    Speed: 0,
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+    getMidpoint: function() { return left.y + left.height / 2; },
+    getTop: function() { return this.y; },
+    getBottom: function() { return this.y + this.height; },
+    getLeft: function() { return this.x; },
+    getRight: function() { return this.x + this.width; },
+    isPastHorizontalThreshold: function(inputBall) { return inputBall.getRight() > this.getLeft(); },
+    isWithinVerticalRange: function(inputBall) { return (inputBall.getTop() <= this.getBottom()) && (inputBall.getBottom() >= this.getTop()); }
 };
-ball = { 
-	xSpeed: 0, 
-	ySpeed: 0, 
-	width: -1, 
-	height: -1, 
-	x: -1, 
-	y: -1
+var ball = {
+    xSpeed: 0,
+    ySpeed: 0,
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+    getTop: function() { return this.y; },
+    getBottom: function() { return this.y + this.height; },
+    getLeft: function() { return this.x; },
+    getRight: function() { return this.x + this.width; },
 };
-aiBall = { 
-	xSpeed: 0, 
-	ySpeed: 0, 
-	width: -1, 
-	height: -1, 
-	x: -1, 
-	y: -1
+var aiBall = {
+    lookaheadRate: 0,
+    xSpeed: 0,
+    ySpeed: 0,
+    width: 0,
+    height: 0,
+    x: 0,
+    y: 0,
+    getTop: function() { return this.y; },
+    getBottom: function() { return this.y + this.height; },
+    getLeft: function() { return this.x; },
+    getRight: function() { return this.x + this.width; },
+    calculatedXSpeed: function() { return this.xSpeed * this.lookaheadRate; },
+    calculatedYSpeed: function() { return this.ySpeed * this.lookaheadRate; }
 };
 
+// "Magic values", the basic constants the game is built upon
+var easyName = 'easy';
+var mediumName = 'medium';
+var hardName = 'hard';
+var defaultDifficulty = mediumName;
 
+var intenseBounceModifier = 1.2;
+var modestBounceModifier = 1.05;
+
+var maxWidth = 450;
+var minWidth = 0;
+var lowestPoint_highestVal = 350;
+var highestPoint_lowestVal = 0;
+
+var leftGoal = minWidth;
+var rightGoal = maxWidth;
+var paddleWidth = 10;
+var paddleHeight = 50;
+var ballWidth = 15;
+var ballHeight = 15;
+
+var upArrowKeyCode = 38;
+var dnArrowKeyCode = 40;
+
+var midlineColor = 'grey';
+var paddleColor = 'black';
+var ballColor = 'grey';
+var ballOutline = 'black';
+var debugBallColor = 'red';
+
+var fieldColor = '#000000';
+var scoreFont = '12px Helvetica';
+var scoreXAlign = 'center';
+var scoreYAlign = 'top';
+
+
+/////////// Utilities ///////////
+
+
+function startOnLeft()
+{
+    ball.xSpeed = initialBallXSpeed;
+    ball.ySpeed = randomNegOrPos() * initialBallYSpeed;
+    ball.x = left.getRight();
+    ball.y = left.getMidpoint() - Math.floor(ball.height / 2);
+    resetAi();
+}
+
+function startOnRight()
+{
+    ball.xSpeed = -1 * initialBallXSpeed;
+    ball.ySpeed = randomNegOrPos() * initialBallYSpeed;
+    ball.x = right.getLeft();
+    ball.y = right.getMidpoint() - Math.floor(ball.height / 2);
+    resetAi();
+}
+
+// Randomly returns either 1 or -1
+function randomNegOrPos()
+{
+    return Math.floor(Math.random() * 2) > 0 ? 1 : -1;
+}
+
+function resetAi ()
+{
+    aiBall.xSpeed = ball.xSpeed;
+    aiBall.ySpeed = ball.ySpeed;
+    aiBall.x = ball.x;
+    aiBall.y = ball.y;
+}
+
+
+/////////// Game Implementation ///////////
+
+
+// Sets the game's difficulty
+function setPingPongDifficulty(diff)
+{
+    var lookaheadRate;
+    var aiPaddleSpeed;
+    var playerPaddleSpeed;
+    var ballXSpeed;
+    var ballYSpeed;
+
+    if (diff == easyName)
+    {
+        lookaheadRate = 1.0;
+        aiPaddleSpeed = 100;
+        playerPaddleSpeed = 1024;
+        ballXSpeed = 128;
+        ballYSpeed = 96;
+    }
+    else if (diff == mediumName)
+    {
+        lookaheadRate = 1.15;
+        aiPaddleSpeed = 115;
+        playerPaddleSpeed = 192;
+        ballXSpeed = 192;
+        ballYSpeed = 128;
+    }
+    else if (diff == hardName)
+    {
+        lookaheadRate = 1.25;
+        aiPaddleSpeed = 130;
+        playerPaddleSpeed = 128;
+        ballXSpeed = 256;
+        ballYSpeed = 256;
+    }
+
+    initialBallXSpeed = ballXSpeed;
+    initialBallYSpeed = ballYSpeed;
+
+    if (ball.xSpeed < 0) {
+        ballXSpeed *= -1;
+    }
+    if (ball.ySpeed < 0) {
+        ballYSpeed *= -1;
+    }
+
+    left.speed = playerPaddleSpeed;
+    right.speed = aiPaddleSpeed;
+
+    ball.xSpeed = ballXSpeed;
+    ball.ySpeed = ballYSpeed;
+    
+    aiBall.lookaheadRate = lookaheadRate;
+    resetAi();
+}
 
 // Places game objects at their initial location and applies the default difficulty.
 function initState(){
-	score = 0;
+    score = 0;
 
-	left.width = 10;
-	left.height = 50;
-	left.x = 0;
-	left.y = 0,
-	
-	right.width = 10;
-	right.height = 50;
-	right.x = canvas.width - 10;
-	right.y = 0;
-	
-	ball.width = 15;
-	ball.height = 15;
-	ball.x = left.width;
-	ball.y = canvas.height / 2;
+    left.width = paddleWidth;
+    left.height = paddleHeight;
+    left.x = minWidth;
+    left.y = Math.floor(lowestPoint_highestVal / 2 - left.height / 2);
+    
+    right.width = paddleWidth;
+    right.height = paddleHeight;
+    right.x = maxWidth - right.width;
+    right.y = Math.floor(lowestPoint_highestVal / 2 - right.height / 2);
+    
+    ball.width = ballWidth;
+    ball.height = ballHeight;
+    
+    aiBall.width = ball.width;
+    aiBall.height = ball.height;
 
-	aiBall.width = ball.width;
-	aiBall.height = ball.height;
-	aiBall.x = left.width;
-	aiBall.y = canvas.height / 2;
-
-	applyCurrentDifficulty();
+    startOnLeft();
 }
-
-// Applies the current difficulty stored in the corresponding globals.
-function applyCurrentDifficulty() {
-	left.speed = playerSpeed;
-	right.speed = aiSpeed;
-
-	ball.xSpeed = ballXSpeed;
-	ball.ySpeed = ballYSpeed;
-	
-	aiBall.xSpeed = (ball.xSpeed * aiAccuracy);
-	aiBall.ySpeed = (ball.ySpeed * aiAccuracy);
-}
-
-
 
 //Watch for keyboard input
-var up = false, dn = false;
 addEventListener("keydown", function (e) {
-	
-	if([38, 40].indexOf(e.keyCode) > -1)
-	{
-		e.preventDefault(); //prevent arrow key nav on the page
-	}
-	if(e.keyCode == 38)
-	{
-		up = true;
-	}
-	if(e.keyCode == 40)
-	{
-		dn = true;
-	}
+    if([upArrowKeyCode, dnArrowKeyCode].indexOf(e.keyCode) > -1)
+    {
+        e.preventDefault(); //prevent arrow key nav on the page
+    }
+    if(e.keyCode == upArrowKeyCode)
+    {
+        up = true;
+    }
+    if(e.keyCode == dnArrowKeyCode)
+    {
+        dn = true;
+    }
 }, false);
-
 addEventListener("keyup", function (e) {
-	if(e.keyCode == 38)
-	{
-		up = false;
-	}
-	if(e.keyCode == 40)
-	{
-		dn = false;
-	}
+    if(e.keyCode == upArrowKeyCode)
+    {
+        up = false;
+    }
+    if(e.keyCode == dnArrowKeyCode)
+    {
+        dn = false;
+    }
 }, false);
 
 //watch for mouse/touch input
-var mouse = false;
-var mouseY = 0;
 canvas.addEventListener("mousemove", function (e) {
-	mouse = true;
-	mouseY = e.offsetY; 
-	if (!mouseY)
-	{
-		var bound = canvas.getBoundingClientRect();
-		mouseY = e.clientY - bound.top;
-	}
+    mouse = true;
+    mouseY = e.offsetY; 
+    if (!mouseY)
+    {
+        var bound = canvas.getBoundingClientRect();
+        mouseY = e.clientY - bound.top;
+    }
 }, false);
-
 canvas.addEventListener("mouseout", function (e) {
-	mouse = false;
+    mouse = false;
 }, false);
-
-
 
 //Update game objects
 function update(seconds) {
-	if (!seconds)
-	{
-		//there are glitches where a browser can feed in a null time,
-		//which can break absolutely everything
-		return; 
-	}
-	var positiveSpeed = (ball.xSpeed > 0);
-	var inRightCourt = (ball.x > canvas.width / 2);
+    applyKeyboardInput(seconds);
+    applyMouseInput(seconds);
 
-	//update ball locations	
-	ball.x += ball.xSpeed * seconds;
-	ball.y += ball.ySpeed * seconds;
-	aiBall.x += aiBall.xSpeed * seconds;
-	aiBall.y += aiBall.ySpeed * seconds;
-
-	//use keyboard and mouse input
-	if (up || (mouse && mouseY < left.y + left.height / 2)) {
-		left.y -= left.speed * seconds;
-		if (left.y < 0)
-		{
-			left.y = 0;
-		}
-	}
-	if (dn || (mouse && mouseY > left.y + left.height / 2)) {
-		left.y += left.speed * seconds;
-		if (left.y + left.height > canvas.height)
-		{
-			left.y = canvas.height - left.height;
-		}
-	}
-
-	simulateAi(seconds);
-
-	collisions(ball);
-	collisions(aiBall);
-
-	//scoring
-	if (ball.x <= 0)
-	{
-		score -= 1;
-		ball.x = (canvas.width - (right.width + ball.width));
-		ball.y = Math.floor(Math.random() * canvas.height + 1);
-	}
-	else if (ball.x >= canvas.width)
-	{
-		score += 1;
-		ball.x = left.width;
-		ball.y = Math.floor(Math.random() * canvas.height + 1);
-	}
-	if ((!positiveSpeed && ball.xSpeed > 0) || 
-		(inRightCourt && ball.x < canvas.width / 2 && ball.xSpeed > 0))
-	{
-		refreshAi();
-	}
+    if(!isPointScored(ball))
+    {
+        updateBall(seconds);
+        updateAiBall(seconds);
+        applyCollisions(ball);
+        applyCollisions(aiBall);
+    }    
 }
 
-
-
-//simulate AI by predicting where the ball will be
-function refreshAi()
+function applyKeyboardInput(seconds)
 {
-	aiBall.x = ball.x;
-	aiBall.y = ball.y;
-	aiBall.xSpeed = ball.xSpeed * aiAccuracy;
-	aiBall.ySpeed = ball.ySpeed * aiAccuracy;
+    if (up) {
+        movePaddleUp(left, seconds);
+    }
+    if (dn) {
+        movePaddleDown(left, seconds);
+    }
 }
 
-function simulateAi(seconds)
+function applyMouseInput(seconds)
 {
-	if(aiBall.x + aiBall.width >= canvas.width - right.width)
-	{
-		aiBall.xSpeed = 0;
-		aiBall.ySpeed = 0;
-	}
-	var diff = (right.y + (right.height / 2) - aiBall.y + (aiBall.height / 2));
-	if  (diff >= right.speed * seconds && aiBall.xSpeed >= 0)
-	{
-		right.y -= right.speed * seconds;
-		if (right.y < 0)
-		{
-			right.y = 0;
-		}
-	}
-	else if (diff < -right.speed * seconds && aiBall.xSpeed >= 0)
-	{
-		right.y += right.speed * seconds;
-		if (right.y + right.height > canvas.height)
-		{
-			right.y = canvas.height - right.height;
-		}
-	}
+    if (mouse && mouseY < left.getMidpoint()) {
+        movePaddleUp(left, seconds);
+    }
+    if (mouse && mouseY > left.getMidpoint()) {
+        movePaddleDown(left, seconds);
+    }
 }
 
-
-// Detect paddle collisions and bounce the ball back.
-function collisions(inputBall)
+function movePaddleUp(inputPaddle, seconds)
 {
-	//Paddle Collisions
-	if ((inputBall.x < left.width && (inputBall.y + inputBall.height > left.y) && 
-		(inputBall.y <= left.y + left.height)))
-	{	
-		inputBall.x = left.width;
-		inputBall.xSpeed = -inputBall.xSpeed;
-		
-		if (inputBall.y >= left.y + (left.height * 9 / 10)) //intense down
-		{
-			if (inputBall.ySpeed > 0)
-			{
-				inputBall.ySpeed *= 1.20;
-			}
-			else
-			{
-				inputBall.ySpeed *= -1.20;
-			}
-		}
-		else if (inputBall.y + inputBall.height <= left.y + (left.height / 10)) //intense up
-		{
-			if (inputBall.ySpeed < 0)
-			{
-				inputBall.ySpeed *= 1.20;
-			}
-			else
-			{
-				inputBall.ySpeed *= -1.20;
-			}
-		}
-		else if (inputBall.y >= left.y + (left.height * 3 / 4)) //slight down
-		{
-			inputBall.ySpeed += ballYSpeed * .05;
-		}
-		else if (inputBall.y + inputBall.height <= left.y + (left.height / 4)) //slight up
-		{
-			inputBall.ySpeed -= ballYSpeed * .05;
-		}
-	}
-	else if (((inputBall.x + inputBall.width > canvas.width - right.width) && 
-		(inputBall.y + inputBall.height > right.y) && 
-		(inputBall.y <= right.y + right.height)))
-	{
-		inputBall.x = canvas.width - right.width - inputBall.width;
-		inputBall.xSpeed = -inputBall.xSpeed;
-	}
-	//Ceiling and floor collisions
-	if (inputBall.y < 0)
-	{
-		inputBall.y = 0;
-		inputBall.ySpeed = -inputBall.ySpeed;
-	}
-	else if (inputBall.y + inputBall.height > canvas.height)
-	{
-		inputBall.y = canvas.height - inputBall.height;
-		inputBall.ySpeed = -inputBall.ySpeed;
-	}
-	return inputBall;
+    inputPaddle.y -= inputPaddle.speed * seconds;
+    if (inputPaddle.getTop() < highestPoint_lowestVal)
+    {
+        inputPaddle.y = highestPoint_lowestVal;
+    }
 }
 
+function movePaddleDown(inputPaddle, seconds)
+{
+    inputPaddle.y += inputPaddle.speed * seconds;
+    if (inputPaddle.getBottom() > lowestPoint_highestVal)
+    {
+        inputPaddle.y = lowestPoint_highestVal - inputPaddle.height;
+    }
+}
 
+function isPointScored()
+{
+    var pointScored = false;
+    if (ball.x <= leftGoal)
+    {
+        score -= 1;
+        startOnLeft();
+        pointScored = true;
+    }
+    else if (ball.x >= rightGoal)
+    {
+        score += 1;
+        startOnRight();
+        pointScored = true;
+    }
+    return pointScored;
+}
+
+function updateBall(seconds)
+{
+    ball.x += ball.xSpeed * seconds;
+    ball.y += ball.ySpeed * seconds;
+    aiBall.x += aiBall.calculatedXSpeed() * seconds;
+    aiBall.y += aiBall.calculatedYSpeed() * seconds;
+}
+
+function updateAiBall(seconds)
+{
+    if(aiBall.x + aiBall.width >= canvas.width - right.width)
+    {
+        aiBall.xSpeed = 0;
+        aiBall.ySpeed = 0;
+    }
+    var diff = (right.y + (right.height / 2) - aiBall.y + (aiBall.height / 2));
+    if  (diff >= right.speed * seconds && aiBall.calculatedXSpeed() >= 0)
+    {
+        right.y -= right.speed * seconds;
+        if (right.y < 0)
+        {
+            right.y = 0;
+        }
+    }
+    else if (diff < -right.speed * seconds && aiBall.calculatedXSpeed() >= 0)
+    {
+        right.y += right.speed * seconds;
+        if (right.y + right.height > canvas.height)
+        {
+            right.y = canvas.height - right.height;
+        }
+    }
+}
+
+// Detect collisions and bounce the ball back.
+function applyCollisions(inputBall)
+{
+    //Paddle applyCollisions
+    if (left.isPastHorizontalThreshold(inputBall) && left.isWithinVerticalRange(inputBall))
+    {
+        inputBall.x = left.width;
+        inputBall.xSpeed = -inputBall.xSpeed;
+        applyPaddleAngleOfAttack(inputBall, left);
+        resetAi();
+    }
+    else if (right.isPastHorizontalThreshold(inputBall) && right.isWithinVerticalRange(inputBall))
+    {
+        inputBall.x = maxWidth - right.width - inputBall.width;
+        inputBall.xSpeed = -inputBall.xSpeed;
+        applyPaddleAngleOfAttack(inputBall, right);
+    }
+
+    //Ceiling and floor applyCollisions
+    if (bottomCollision(inputBall))
+    {
+        inputBall.y = lowestPoint_highestVal - inputBall.height;
+        inputBall.ySpeed = -inputBall.ySpeed;
+    }
+    else if (topCollision(inputBall))
+    {
+        inputBall.y = highestPoint_lowestVal;
+        inputBall.ySpeed = -inputBall.ySpeed;
+    }
+}
+
+// Apply a speed modifier to the ball based on how intense an angle the ball was hit at
+function applyPaddleAngleOfAttack(inputBall, inputPaddle)
+{
+    if (inputBall.y >= inputPaddle.y + Math.floor(inputPaddle.height * 9 / 10)) //intense down
+    {
+        if (inputBall.ySpeed > 0)
+        {
+            inputBall.ySpeed *= intenseBounceModifier;
+        }
+        else
+        {
+            inputBall.ySpeed *= -intenseBounceModifier;
+        }
+    }
+    else if (inputBall.y + inputBall.height <= inputPaddle.y + Math.ceil(inputPaddle.height / 10)) //intense up
+    {
+        if (inputBall.ySpeed < 0)
+        {
+            inputBall.ySpeed *= intenseBounceModifier;
+        }
+        else
+        {
+            inputBall.ySpeed *= -intenseBounceModifier;
+        }
+    }
+    else if (inputBall.y >= inputPaddle.y + Math.floor(inputPaddle.height * 3 / 4)) //slight down
+    {
+        inputBall.ySpeed *= modestBounceModifier;
+    }
+    else if (inputBall.y + inputBall.height <= inputPaddle.y + Math.ceil(inputPaddle.height / 4)) //slight up
+    {
+        inputBall.ySpeed -= inputBall.ySpeed * .05;
+    }
+}
+
+function bottomCollision(inputBall)
+{
+    return inputBall.getBottom() > lowestPoint_highestVal;
+}
+
+function topCollision(inputBall)
+{
+    return inputBall.getTop() < highestPoint_lowestVal;
+}
 
 // Draw everything
 function draw() {
-	//Clear the canvas for the next drawing cycle
-	context.clearRect(0, 0, canvas.width, canvas.height);	
-	
-	//The Mid-line
-	context.beginPath();
-	context.moveTo(canvas.width / 2 - 2, 15);
-	context.lineTo(canvas.width / 2 - 2, canvas.height);
-	context.moveTo(canvas.width / 2 + 2, 15);
-	context.lineTo(canvas.width / 2 + 2, canvas.height);
-	context.strokeStyle = 'grey';
-	context.stroke();
-	
-	//The left paddle
-	context.beginPath();
-	context.rect(left.x, left.y, left.width, left.height);
-	context.fillStyle = 'black';
-	context.fill();
-	
-	//The right paddle
-	context.beginPath();
-	context.rect(right.x, right.y, right.width, right.height);
-	context.fillStyle = 'black';
-	context.fill();
-	
-	//The ball
-	context.beginPath()
-	context.rect(ball.x, ball.y, ball.width, ball.height);
-	context.fillStyle = 'grey';
-	context.lineWidth = 1;
-	context.strokeStyle = 'black';
-	context.fill();
-	context.stroke();
-	
-	//the aiBall, for debugging
-	/*
-	context.beginPath()
-	context.rect(aiBall.x, aiBall.y, aiBall.width, aiBall.height);
-	context.fillStyle = 'red';
-	context.fill();
-	*/
-	
-	//Score
-	context.fillStyle = "#000000";
-	context.font = "12px Helvetica";
-	context.textAlign = "center";
-	context.textBaseline = "top";
-	context.fillText("Score: " + score, canvas.width / 2.02, 0);
+    // Clear the canvas for the next drawing cycle
+    context.clearRect(0, 0, canvas.width, canvas.height);   
+    
+    // The Mid-line
+    context.beginPath();
+    context.moveTo(canvas.width / 2 - 2, 15);
+    context.lineTo(canvas.width / 2 - 2, canvas.height);
+    context.moveTo(canvas.width / 2 + 2, 15);
+    context.lineTo(canvas.width / 2 + 2, canvas.height);
+    context.strokeStyle = midlineColor;
+    context.stroke();
+    
+    // The left paddle
+    context.beginPath();
+    context.rect(left.x, left.y, left.width, left.height);
+    context.fillStyle = paddleColor;
+    context.fill();
+    
+    // The right paddle
+    context.beginPath();
+    context.rect(right.x, right.y, right.width, right.height);
+    context.fillStyle = paddleColor;
+    context.fill();
+    
+    // The ball
+    context.beginPath()
+    context.rect(ball.x, ball.y, ball.width, ball.height);
+    context.fillStyle = ballColor;
+    context.lineWidth = 1;
+    context.strokeStyle = ballOutline;
+    context.fill();
+    context.stroke();
+    
+    // The aiBall, for debugging
+    if(debug)
+    {
+        context.beginPath()
+        context.rect(aiBall.x, aiBall.y, aiBall.width, aiBall.height);
+        context.fillStyle = debugBallColor;
+        context.fill();
+    }
+
+    // Score
+    context.fillStyle = fieldColor;
+    context.font = scoreFont;
+    context.textAlign = scoreXAlign;
+    context.textBaseline = scoreYAlign;
+    context.fillText("Score: " + score, canvas.width / 2.02, 0);
 }
 
 // Game driving function
 function pingPong(time)
 {
-	var timer = time - prev;
-	if (!paused)
-	{
-		update(timer / 1000);
-		draw();
-	}
+    var timer = time - prev;
+    
+    if (!paused)
+    {
+        update(timer / 1000);
+        draw();
+    }
 
-	prev = time;
-	requestNextAnimationFrame(pingPong);
+    prev = time;
+    requestNextAnimationFrame(pingPong);
 }
 
-// Get the first value of time, since it is unknown until supplied
-// This is a wrapper around the 'pingPong' function
-function getStartTime(time)
+// A wrapper call to get the initial time from requestNextAnimationFrame 
+function beginPingPong(time)
 {
-	prev = time;
-	requestNextAnimationFrame(pingPong);
+    prev = time;
+    requestNextAnimationFrame(pingPong);
 }
 
 
 /////////// Interface used in DOM ///////////
 
+
 // Create a div with 'pingPong' as it's ID
 // Once that div is loaded, call this function to generate a ping pong table
 function createPingPong() {
-	var div = document.getElementById('pingPong');
-	div.appendChild(canvas);
-	div.appendChild(document.createElement("br"));
+    // Configure the canvas
+    canvas.style.border = '1px solid';
+    canvas.width = maxWidth;
+    canvas.height = lowestPoint_highestVal;
+
+    // Run one iteration of the game to display its starting state
+    initState();
+    setPingPongDifficulty(defaultDifficulty);
+    update(0);
+    draw();
+    
+    // Add the canvas to the DOM in the pingPong div
+    var div = document.getElementById('pingPong');
+    div.appendChild(canvas);
+    div.appendChild(document.createElement("br"));
 }
 
 // Start the game
 function startPingPong()
 {
-	document.getElementById('startBtn').style.display = 'none';
-	setStyleByClass('hidden', 'display:inherit;');
-	requestNextAnimationFrame(getStartTime);
+    document.getElementById('startBtn').style.display = 'none';
+    setStyleByClass('hidden', 'display:inherit;');
+    requestNextAnimationFrame(beginPingPong);
 }
 
 // Resets the game
 function resetPingPong()
 {
-	initState();
-	if (paused)
-	{
-		togglePingPongPause();
-	}
-}
-
-// Sets the game's difficulty
-function setPingPongDifficulty(diff)
-{
-	ballXSpeed = 128;
-
-	if (diff == 'easy')
-	{
-		aiAccuracy = 1.0;
-		aiSpeed = 100;
-		playerSpeed = 1024;
-		ballYSpeed = 96;
-	}
-	else if (diff == 'medium')
-	{
-		aiAccuracy = 1.15;
-		aiSpeed = 115;
-		playerSpeed = 192;
-		ballYSpeed = 128;
-	}
-	else if (diff == 'hard')
-	{
-		aiAccuracy = 1.25;
-		aiSpeed = 130;
-		playerSpeed = 128;
-		ballYSpeed = 255;
-	}
-
-	if (ball.xSpeed < 0) {
-		ballXSpeed *= -1;
-	}
-	if (ball.ySpeed < 0) {
-		ballYSpeed *= -1;
-	}
-
-	applyCurrentDifficulty();
+    setPingPongDifficulty(defaultDifficulty);
+    initState();
+    if (paused)
+    {
+        togglePingPongPause();
+    }
 }
 
 // Pauses and un-pauses the game
 function togglePingPongPause()
 {
-	paused = !paused;
-	if (paused)
-	{
-		document.getElementById('pauseBtn').innerHTML = '&nbsp;Resume&nbsp;';
-	}
-	else
-	{
-		document.getElementById('pauseBtn').innerHTML = '&nbsp;Pause&nbsp;';
-	}
+    paused = !paused;
+    if (paused)
+    {
+        document.getElementById('pauseBtn').innerHTML = '&nbsp;Resume&nbsp;';
+    }
+    else
+    {
+        document.getElementById('pauseBtn').innerHTML = '&nbsp;Pause&nbsp;';
+    }
 }
-
-// Run one iteration of the game to display its starting state
-setPingPongDifficulty('medium');
-initState();
-update(0);
-draw();
-
-
-
-
-

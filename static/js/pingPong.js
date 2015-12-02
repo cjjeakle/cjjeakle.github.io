@@ -27,13 +27,13 @@ var initialBallYSpeed; //the y-axis speed to apply to the ball when serving
 // Paddle and ball objects
 // Initialized with nonsense values
 var score = 0;
-var left = {
+var leftPaddle = {
     Speed: 0,
     width: 0,
     height: 0,
     x: 0,
     y: 0,
-    getMidpoint: function() { return left.y + left.height / 2; },
+    getMidpoint: function() { return this.y + this.height / 2; },
     getTop: function() { return this.y; },
     getBottom: function() { return this.y + this.height; },
     getLeft: function() { return this.x; },
@@ -41,13 +41,13 @@ var left = {
     isPastHorizontalThreshold: function(inputBall) { return inputBall.getLeft() < this.getRight(); },
     isWithinVerticalRange: function(inputBall) { return (inputBall.getTop() <= this.getBottom()) && (inputBall.getBottom() >= this.getTop()); }
 };
-var right = {
+var rightPaddle = {
     Speed: 0,
     width: 0,
     height: 0,
     x: 0,
     y: 0,
-    getMidpoint: function() { return left.y + left.height / 2; },
+    getMidpoint: function() { return this.y + this.height / 2; },
     getTop: function() { return this.y; },
     getBottom: function() { return this.y + this.height; },
     getLeft: function() { return this.x; },
@@ -126,8 +126,8 @@ function startOnLeft()
 {
     ball.xSpeed = initialBallXSpeed;
     ball.ySpeed = randomNegOrPos() * initialBallYSpeed;
-    ball.x = left.getRight();
-    ball.y = left.getMidpoint() - Math.floor(ball.height / 2);
+    ball.x = leftPaddle.getRight();
+    ball.y = leftPaddle.getMidpoint() - Math.floor(ball.height / 2);
     resetAi();
 }
 
@@ -135,8 +135,8 @@ function startOnRight()
 {
     ball.xSpeed = -1 * initialBallXSpeed;
     ball.ySpeed = randomNegOrPos() * initialBallYSpeed;
-    ball.x = right.getLeft();
-    ball.y = right.getMidpoint() - Math.floor(ball.height / 2);
+    ball.x = rightPaddle.getLeft();
+    ball.y = rightPaddle.getMidpoint() - Math.floor(ball.height / 2);
     resetAi();
 }
 
@@ -202,8 +202,8 @@ function setPingPongDifficulty(diff)
         ballYSpeed *= -1;
     }
 
-    left.speed = playerPaddleSpeed;
-    right.speed = aiPaddleSpeed;
+    leftPaddle.speed = playerPaddleSpeed;
+    rightPaddle.speed = aiPaddleSpeed;
 
     ball.xSpeed = ballXSpeed;
     ball.ySpeed = ballYSpeed;
@@ -216,15 +216,15 @@ function setPingPongDifficulty(diff)
 function initState(){
     score = 0;
 
-    left.width = paddleWidth;
-    left.height = paddleHeight;
-    left.x = minWidth;
-    left.y = Math.floor(lowestPoint_highestVal / 2 - left.height / 2);
+    leftPaddle.width = paddleWidth;
+    leftPaddle.height = paddleHeight;
+    leftPaddle.x = minWidth;
+    leftPaddle.y = Math.floor(lowestPoint_highestVal / 2 - leftPaddle.height / 2);
     
-    right.width = paddleWidth;
-    right.height = paddleHeight;
-    right.x = maxWidth - right.width;
-    right.y = Math.floor(lowestPoint_highestVal / 2 - right.height / 2);
+    rightPaddle.width = paddleWidth;
+    rightPaddle.height = paddleHeight;
+    rightPaddle.x = maxWidth - rightPaddle.width;
+    rightPaddle.y = Math.floor(lowestPoint_highestVal / 2 - rightPaddle.height / 2);
     
     ball.width = ballWidth;
     ball.height = ballHeight;
@@ -301,10 +301,10 @@ function applyKeyboardInput(seconds)
 
 function applyMouseInput(seconds)
 {
-    if (mouse && mouseY < left.getMidpoint()) {
+    if (mouse && mouseY < leftPaddle.getMidpoint()) {
         movePaddleUp(left, seconds);
     }
-    if (mouse && mouseY > left.getMidpoint()) {
+    if (mouse && mouseY > leftPaddle.getMidpoint()) {
         movePaddleDown(left, seconds);
     }
 }
@@ -355,26 +355,26 @@ function updateBall(seconds)
 
 function updateAiBall(seconds)
 {
-    if(aiBall.x + aiBall.width >= canvas.width - right.width)
+    if(aiBall.x + aiBall.width >= canvas.width - rightPaddle.width)
     {
         aiBall.xSpeed = 0;
         aiBall.ySpeed = 0;
     }
-    var diff = (right.y + (right.height / 2) - aiBall.y + (aiBall.height / 2));
-    if  (diff >= right.speed * seconds && aiBall.calculatedXSpeed() >= 0)
+    var diff = (rightPaddle.y + (rightPaddle.height / 2) - aiBall.y + (aiBall.height / 2));
+    if  (diff >= rightPaddle.speed * seconds && aiBall.calculatedXSpeed() >= 0)
     {
-        right.y -= right.speed * seconds;
-        if (right.y < 0)
+        rightPaddle.y -= rightPaddle.speed * seconds;
+        if (rightPaddle.y < 0)
         {
-            right.y = 0;
+            rightPaddle.y = 0;
         }
     }
-    else if (diff < -right.speed * seconds && aiBall.calculatedXSpeed() >= 0)
+    else if (diff < -rightPaddle.speed * seconds && aiBall.calculatedXSpeed() >= 0)
     {
-        right.y += right.speed * seconds;
-        if (right.y + right.height > canvas.height)
+        rightPaddle.y += rightPaddle.speed * seconds;
+        if (rightPaddle.y + rightPaddle.height > canvas.height)
         {
-            right.y = canvas.height - right.height;
+            rightPaddle.y = canvas.height - rightPaddle.height;
         }
     }
 }
@@ -383,18 +383,18 @@ function updateAiBall(seconds)
 function applyCollisions(inputBall)
 {
     //Paddle applyCollisions
-    if (left.isPastHorizontalThreshold(inputBall) && left.isWithinVerticalRange(inputBall))
+    if (leftPaddle.isPastHorizontalThreshold(inputBall) && leftPaddle.isWithinVerticalRange(inputBall))
     {
-        inputBall.x = left.width;
+        inputBall.x = leftPaddle.width;
         inputBall.xSpeed = -inputBall.xSpeed;
-        applyPaddleAngleOfAttack(inputBall, left);
+        applyPaddleAngleOfAttack(inputBall, leftPaddle);
         resetAi();
     }
-    else if (right.isPastHorizontalThreshold(inputBall) && right.isWithinVerticalRange(inputBall))
+    else if (rightPaddle.isPastHorizontalThreshold(inputBall) && rightPaddle.isWithinVerticalRange(inputBall))
     {
-        inputBall.x = maxWidth - right.width - inputBall.width;
+        inputBall.x = maxWidth - rightPaddle.width - inputBall.width;
         inputBall.xSpeed = -inputBall.xSpeed;
-        applyPaddleAngleOfAttack(inputBall, right);
+        applyPaddleAngleOfAttack(inputBall, rightPaddle);
     }
 
     //Ceiling and floor applyCollisions
@@ -471,13 +471,13 @@ function draw() {
     
     // The left paddle
     context.beginPath();
-    context.rect(left.x, left.y, left.width, left.height);
+    context.rect(leftPaddle.x, leftPaddle.y, leftPaddle.width, leftPaddle.height);
     context.fillStyle = paddleColor;
     context.fill();
     
     // The right paddle
     context.beginPath();
-    context.rect(right.x, right.y, right.width, right.height);
+    context.rect(rightPaddle.x, rightPaddle.y, rightPaddle.width, rightPaddle.height);
     context.fillStyle = paddleColor;
     context.fill();
     

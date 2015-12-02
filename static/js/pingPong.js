@@ -292,20 +292,20 @@ function update(seconds) {
 function applyKeyboardInput(seconds)
 {
     if (up) {
-        movePaddleUp(left, seconds);
+        movePaddleUp(leftPaddle, seconds);
     }
     if (dn) {
-        movePaddleDown(left, seconds);
+        movePaddleDown(leftPaddle, seconds);
     }
 }
 
 function applyMouseInput(seconds)
 {
     if (mouse && mouseY < leftPaddle.getMidpoint()) {
-        movePaddleUp(left, seconds);
+        movePaddleUp(leftPaddle, seconds);
     }
     if (mouse && mouseY > leftPaddle.getMidpoint()) {
-        movePaddleDown(left, seconds);
+        movePaddleDown(leftPaddle, seconds);
     }
 }
 

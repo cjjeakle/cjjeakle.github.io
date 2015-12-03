@@ -439,7 +439,7 @@ function applyCollisions(inputBall)
 // Apply a speed modifier to the ball based on how intense an angle the ball was hit at
 function applyPaddleAngleOfAttack(inputBall, inputPaddle)
 {
-    if (inputBall.y >= inputPaddle.y + Math.floor(inputPaddle.height * 9 / 10)) //intense down
+    if (inputBall.getTop() >= inputPaddle.getBottom() - Math.floor(inputPaddle.height / 5)) //intense down
     {
         if (inputBall.ySpeed > 0)
         {
@@ -450,7 +450,7 @@ function applyPaddleAngleOfAttack(inputBall, inputPaddle)
             inputBall.ySpeed *= -intenseBounceModifier;
         }
     }
-    else if (inputBall.y + inputBall.height <= inputPaddle.y + Math.ceil(inputPaddle.height / 10)) //intense up
+    else if (inputBall.getBottom() <= inputPaddle.getTop() + Math.ceil(inputPaddle.height / 5)) //intense up
     {
         if (inputBall.ySpeed < 0)
         {
@@ -461,13 +461,13 @@ function applyPaddleAngleOfAttack(inputBall, inputPaddle)
             inputBall.ySpeed *= -intenseBounceModifier;
         }
     }
-    else if (inputBall.y >= inputPaddle.y + Math.floor(inputPaddle.height * 3 / 4)) //slight down
+    else if (inputBall.getTop() >= inputPaddle.getBottom() - Math.floor(inputPaddle.height / 3)) //slight down
     {
         inputBall.ySpeed *= modestBounceModifier;
     }
-    else if (inputBall.y + inputBall.height <= inputPaddle.y + Math.ceil(inputPaddle.height / 4)) //slight up
+    else if (inputBall.getBottom() <= inputPaddle.getTop() + Math.ceil(inputPaddle.height / 3)) //slight up
     {
-        inputBall.ySpeed -= inputBall.ySpeed * .05;
+        inputBall.ySpeed *= 1 + (1 - modestBounceModifier);
     }
 }
 

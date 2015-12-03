@@ -17,8 +17,6 @@ var context = canvas.getContext("2d");
 var debug = false;  //whether any debug tools should be enabled
 var prev = 0;       //the previous value of time from "requestNextAnimationFrame()"
 var paused = false; //whether or not the game is paused
-var up = false;     //whether the up arrow is currently pressed
-var dn = false;     //whether the down arrow is currently pressed
 var mouse = false;  //whether mouse input is being provided
 var mouseY = 0;     //the current mouse y-index in the canvas
 var touch = false;  //whether touch input is being provided
@@ -125,6 +123,12 @@ var scoreYAlign = 'top';
 /////////// Utilities ///////////
 
 
+// Randomly returns either 1 or -1
+function randomNegOrPos()
+{
+    return Math.floor(Math.random() * 2) > 0 ? 1 : -1;
+}
+
 function startOnLeft()
 {
     ball.xSpeed = initialBallXSpeed;
@@ -143,13 +147,7 @@ function startOnRight()
     resetAi();
 }
 
-// Randomly returns either 1 or -1
-function randomNegOrPos()
-{
-    return Math.floor(Math.random() * 2) > 0 ? 1 : -1;
-}
-
-function resetAi ()
+function resetAi()
 {
     aiBall.xSpeed = ball.xSpeed;
     aiBall.ySpeed = ball.ySpeed;
@@ -238,32 +236,6 @@ function initState(){
     startOnLeft();
 }
 
-// Watch for keyboard input
-addEventListener("keydown", function (e) {
-    if([upArrowKeyCode, dnArrowKeyCode].indexOf(e.keyCode) > -1)
-    {
-        e.preventDefault(); //prevent arrow key nav on the page
-    }
-    if(e.keyCode == upArrowKeyCode)
-    {
-        up = true;
-    }
-    if(e.keyCode == dnArrowKeyCode)
-    {
-        dn = true;
-    }
-}, false);
-addEventListener("keyup", function (e) {
-    if(e.keyCode == upArrowKeyCode)
-    {
-        up = false;
-    }
-    if(e.keyCode == dnArrowKeyCode)
-    {
-        dn = false;
-    }
-}, false);
-
 // Watch for mouse input
 canvas.addEventListener("mousemove", function (e) {
     mouse = true;
@@ -292,7 +264,6 @@ canvas.addEventListener('ontouchend', function (e) {
 
 //Update game objects
 function update(seconds) {
-    applyKeyboardInput(seconds);
     applyMouseInput(seconds);
     applyTouchInput(seconds);
 
@@ -302,53 +273,65 @@ function update(seconds) {
         updateAiBall(seconds);
         applyCollisions(ball);
         applyCollisions(aiBall);
-    }    
-}
-
-function applyKeyboardInput(seconds)
-{
-    if (up) {
-        movePaddleUp(leftPaddle, seconds);
-    }
-    if (dn) {
-        movePaddleDown(leftPaddle, seconds);
     }
 }
 
 function applyMouseInput(seconds)
 {
-    if (mouse && mouseY < leftPaddle.getMidpoint()) {
-        movePaddleUp(leftPaddle, seconds);
-    }
-    if (mouse && mouseY > leftPaddle.getMidpoint()) {
-        movePaddleDown(leftPaddle, seconds);
+    if (mouse) {
+        movePaddleTowardCoordinate(seconds, leftPaddle, mouseY);
     }
 }
 
 function applyTouchInput(seconds)
 {
-    if (touch && touchY < leftPaddle.getMidpoint()) {
-        movePaddleUp(leftPaddle, seconds);
-    }
-    if (touch && touchY > leftPaddle.getMidpoint()) {
-        movePaddleDown(leftPaddle, seconds);
+    if (touch) {
+        movePaddleTowardCoordinate(seconds, leftPaddle, touchY);
     }
 }
 
-function movePaddleUp(inputPaddle, seconds)
+function movePaddleTowardCoordinate(seconds, inputPaddle, yIndex)
 {
-    inputPaddle.y -= inputPaddle.speed * seconds;
-    if (inputPaddle.getTop() < highestPoint_lowestVal) // prevent moving up past the top
-    {
+    var displacement = Math.ceil(inputPaddle.speed * seconds);
+
+    if (Math.abs(inputPaddle.getMidpoint() - yIndex) <= displacement) { // move the paddle to the given index if possible
+        snapPaddleToCoordinate(inputPaddle, yIndex);
+    } else if (yIndex < inputPaddle.getMidpoint()) { // move the paddle up toward the given index
+        movePaddleUp(inputPaddle, displacement);
+    } else if (yIndex > inputPaddle.getMidpoint()) { // move the paddle up toward the given index
+        movePaddleDown(inputPaddle, displacement);
+    }
+
+    enforcePaddleUpperBound(inputPaddle);
+    enforcePaddleLowerBound(inputPaddle);
+}
+
+function snapPaddleToCoordinate(inputPaddle, yIndex)
+{
+    inputPaddle.y = yIndex - Math.floor(inputPaddle.height / 2);
+}
+
+function movePaddleUp(inputPaddle, displacement)
+{
+    inputPaddle.y -= displacement;
+    
+}
+
+function movePaddleDown(inputPaddle, displacement)
+{
+    inputPaddle.y += displacement;
+}
+
+function enforcePaddleUpperBound(inputPaddle)
+{
+    if (inputPaddle.getTop() < highestPoint_lowestVal) {
         inputPaddle.y = highestPoint_lowestVal;
     }
 }
 
-function movePaddleDown(inputPaddle, seconds)
+function enforcePaddleLowerBound(inputPaddle)
 {
-    inputPaddle.y += inputPaddle.speed * seconds;
-    if (inputPaddle.getBottom() > lowestPoint_highestVal) // prevent moving down past the bottom
-    {
+    if (inputPaddle.getBottom() > lowestPoint_highestVal) {
         inputPaddle.y = lowestPoint_highestVal - inputPaddle.height;
     }
 }

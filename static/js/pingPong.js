@@ -15,7 +15,7 @@ var context = canvas.getContext("2d");
 
 // Game state variables (speed is in px per sec)
 var debug = false;  //whether any debug tools should be enabled
-var prev = 0;       //the previous value of time from "requestNextAnimationFrame()"
+var prev = 0;       //the previous value of time
 var paused = false; //whether or not the game is paused
 var mouse = false;  //whether mouse input is being provided
 var mouseY = 0;     //the current mouse y-index in the canvas
@@ -528,14 +528,14 @@ function pingPong(time)
     }
 
     prev = time;
-    requestNextAnimationFrame(pingPong);
+    requestAnimationFrame(pingPong);
 }
 
-// A wrapper call to get the initial time from requestNextAnimationFrame 
+// A wrapper call to get the initial time from requestAnimationFrame 
 function beginPingPong(time)
 {
     prev = time;
-    requestNextAnimationFrame(pingPong);
+    requestAnimationFrame(pingPong);
 }
 
 
@@ -567,7 +567,7 @@ function startPingPong()
 {
     document.getElementById('startBtn').style.display = 'none';
     setStyleByClass('hidden', 'display:inherit;');
-    requestNextAnimationFrame(beginPingPong);
+    requestAnimationFrame(beginPingPong);
 }
 
 // Resets the game

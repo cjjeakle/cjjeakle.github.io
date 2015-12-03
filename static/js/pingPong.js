@@ -21,6 +21,8 @@ var up = false;     //whether the up arrow is currently pressed
 var dn = false;     //whether the down arrow is currently pressed
 var mouse = false;  //whether mouse input is being provided
 var mouseY = 0;     //the current mouse y-index in the canvas
+var touch = false;  //whether touch input is being provided
+var touchY = 0;     //the current touch y-index in the canvas
 var initialBallXSpeed; //the x-axis speed to apply to the ball when serving
 var initialBallYSpeed; //the y-axis speed to apply to the ball when serving
 
@@ -92,13 +94,14 @@ var defaultDifficulty = mediumName;
 var intenseBounceModifier = 1.2;
 var modestBounceModifier = 1.05;
 
+var desiredWidthToHeightRatio = 10 / 7;
 var maxWidth = 450;
 var minWidth = 0;
-var lowestPoint_highestVal = 350;
+var lowestPoint_highestVal = Math.floor(maxWidth / desiredWidthToHeightRatio);
 var highestPoint_lowestVal = 0;
 
-var leftGoal = minWidth;
-var rightGoal = maxWidth;
+var leftGoalLocation = function() { return minWidth; };
+var rightGoalLocation = function() { return maxWidth; };
 var paddleWidth = 10;
 var paddleHeight = 50;
 var ballWidth = 15;
@@ -135,7 +138,7 @@ function startOnRight()
 {
     ball.xSpeed = -1 * initialBallXSpeed;
     ball.ySpeed = randomNegOrPos() * initialBallYSpeed;
-    ball.x = rightPaddle.getLeft();
+    ball.x = rightPaddle.getLeft() - ball.width;
     ball.y = rightPaddle.getMidpoint() - Math.floor(ball.height / 2);
     resetAi();
 }
@@ -235,7 +238,7 @@ function initState(){
     startOnLeft();
 }
 
-//Watch for keyboard input
+// Watch for keyboard input
 addEventListener("keydown", function (e) {
     if([upArrowKeyCode, dnArrowKeyCode].indexOf(e.keyCode) > -1)
     {
@@ -261,7 +264,7 @@ addEventListener("keyup", function (e) {
     }
 }, false);
 
-//watch for mouse/touch input
+// Watch for mouse input
 canvas.addEventListener("mousemove", function (e) {
     mouse = true;
     mouseY = e.offsetY; 
@@ -275,10 +278,23 @@ canvas.addEventListener("mouseout", function (e) {
     mouse = false;
 }, false);
 
+// Watch for touch input
+canvas.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+    mouse = false; // touch input overrides mouse input
+    touch = true;
+    var bound = canvas.getBoundingClientRect();
+    touchY = e.targetTouches[0].clientY - bound.top; // Only use the first touch if user is multi-touching
+}, false);
+canvas.addEventListener('ontouchend', function (e) {
+    touch = false;
+}, false);
+
 //Update game objects
 function update(seconds) {
     applyKeyboardInput(seconds);
     applyMouseInput(seconds);
+    applyTouchInput(seconds);
 
     if(!isPointScored(ball))
     {
@@ -309,10 +325,20 @@ function applyMouseInput(seconds)
     }
 }
 
+function applyTouchInput(seconds)
+{
+    if (touch && touchY < leftPaddle.getMidpoint()) {
+        movePaddleUp(leftPaddle, seconds);
+    }
+    if (touch && touchY > leftPaddle.getMidpoint()) {
+        movePaddleDown(leftPaddle, seconds);
+    }
+}
+
 function movePaddleUp(inputPaddle, seconds)
 {
     inputPaddle.y -= inputPaddle.speed * seconds;
-    if (inputPaddle.getTop() < highestPoint_lowestVal)
+    if (inputPaddle.getTop() < highestPoint_lowestVal) // prevent moving up past the top
     {
         inputPaddle.y = highestPoint_lowestVal;
     }
@@ -321,7 +347,7 @@ function movePaddleUp(inputPaddle, seconds)
 function movePaddleDown(inputPaddle, seconds)
 {
     inputPaddle.y += inputPaddle.speed * seconds;
-    if (inputPaddle.getBottom() > lowestPoint_highestVal)
+    if (inputPaddle.getBottom() > lowestPoint_highestVal) // prevent moving down past the bottom
     {
         inputPaddle.y = lowestPoint_highestVal - inputPaddle.height;
     }
@@ -330,13 +356,13 @@ function movePaddleDown(inputPaddle, seconds)
 function isPointScored()
 {
     var pointScored = false;
-    if (ball.x <= leftGoal)
+    if (ball.x <= leftGoalLocation())
     {
         score -= 1;
         startOnLeft();
         pointScored = true;
     }
-    else if (ball.x >= rightGoal)
+    else if (ball.x >= rightGoalLocation())
     {
         score += 1;
         startOnRight();
@@ -536,6 +562,11 @@ function beginPingPong(time)
 // Create a div with 'pingPong' as it's ID
 // Once that div is loaded, call this function to generate a ping pong table
 function createPingPong() {
+    // Add the canvas to the DOM in the pingPong div
+    var div = document.getElementById('pingPong');
+    div.appendChild(canvas);
+    div.appendChild(document.createElement("br"));
+
     // Configure the canvas
     canvas.style.border = '1px solid';
     canvas.width = maxWidth;
@@ -546,11 +577,6 @@ function createPingPong() {
     setPingPongDifficulty(defaultDifficulty);
     update(0);
     draw();
-    
-    // Add the canvas to the DOM in the pingPong div
-    var div = document.getElementById('pingPong');
-    div.appendChild(canvas);
-    div.appendChild(document.createElement("br"));
 }
 
 // Start the game

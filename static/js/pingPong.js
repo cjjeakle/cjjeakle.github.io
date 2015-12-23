@@ -566,7 +566,7 @@ function createPingPong() {
 function startPingPong()
 {
     document.getElementById('startBtn').style.display = 'none';
-    setStyleByClass('hidden', 'display:inherit;');
+    document.getElementById('gameControls').style.display = 'inherit';
     requestAnimationFrame(beginPingPong);
 }
 

@@ -7,10 +7,12 @@
   <meta name="description" content="{{ site.description }}">
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
 
-  <!-- css-->
-  <link href="{{ '/static/css/normalize.css' | prepend: site.baseurl }}" rel="stylesheet" type="text/css"/>
-  <link href="{{ '/static/css/skeleton.css' | prepend: site.baseurl }}" rel="stylesheet" type="text/css"/>
+  <!-- css libraries -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" />
+
+  <!-- css -->
   <link href="{{ '/static/css/main.css' | prepend: site.baseurl }}" rel="stylesheet" type="text/css"/>
-  <!-- js-->
+  <!-- js -->
   <script type="text/javascript" src="{{ '/static/js/main.js' | prepend: site.baseurl }}"> </script>
 </head>

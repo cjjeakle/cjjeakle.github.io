@@ -42,42 +42,6 @@ br {
     margin-bottom: 1em;
 }
 
-
-
-/**
- * footer
- */
-.footer {
-    //border-top: 1px solid lightGray;
-}
-
-
-/**
- * Buttons
- */
-.btn {
-    text-decoration: none;
-    font-size: 1.3em;
-    cursor: pointer;
-    overflow: hidden;
-    background: #CCC;
-    color: #000;
-    border-radius: 2px;
-    padding: 0.00em 0.10em 0.10em 0.10em;
-    border: 1px solid transparent;
-}
-
-.btn:hover {
-    color: #000;
-    border-color: rgba( 0, 0, 0, 0.85 );
-    background: #777;
-}
-
-
-
-/**
- * Header
- */
 #headerImg {
     display: inline;
     position: relative;
@@ -116,10 +80,31 @@ br {
 #navigation {
 }
 
+#navigation li {
+    white-space: nowrap;
+}
+
+#navigation li:after {
+    content: " //";
+}
+
+#navigation li:last-child:after {
+    content: "";
+}
+
 #navigation ul {
     margin-top: 0px;
     margin-bottom: 0px;
     list-style-type:none;
+}
+
+#navigation ul:after {
+    content: "\a--";
+    white-space: pre;
+}
+
+#navigation ul:last-child:after {
+    content: "";
 }
 
 #navigation li {
@@ -135,4 +120,35 @@ br {
 
 #navigation a:hover {
     color:#000;
+}
+
+
+
+/**
+ * footer
+ */
+.footer {
+    //border-top: 1px solid lightGray;
+}
+
+
+/**
+ * Buttons
+ */
+.btn {
+    text-decoration: none;
+    font-size: 1.3em;
+    cursor: pointer;
+    overflow: hidden;
+    background: #CCC;
+    color: #000;
+    border-radius: 2px;
+    padding: 0.00em 0.10em 0.10em 0.10em;
+    border: 1px solid transparent;
+}
+
+.btn:hover {
+    color: #000;
+    border-color: rgba( 0, 0, 0, 0.85 );
+    background: #777;
 }

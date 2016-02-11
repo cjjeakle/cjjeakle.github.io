@@ -49,4 +49,21 @@ layout: default
         <a href="https://github.com/cjjeakle/rebalance-calc">The project's code on GitHub.</a>
       </p>
     </div>
+
+    <div class="row">
+      <h4>Smart Sync</h4>
+      <p>
+        I created Smart Sync after getting frustrated waiting for the built-in Windows 10 mail app to sync changes to the server. 
+        After some investigation, I discovered "triage" events (eg: marking as read, moving to a folder, etc) flush to the server on a schedule, and do not propagate immediately.
+        Being <a href="https://www.goodreads.com/quotes/568877-i-choose-a-lazy-person-to-do-a-hard-job">lazy</a> at heart, I refuse to press the "refresh" button to sync my work before switching to a web mail interface or my phone.
+      </p>
+      <p>
+        After some investigation, I discovered a nifty API to access email mailboxes on my machine, listen for change events, and automatically invoke a sync.
+        Now I can run this app while using the mail app, and rest assured that all my changes are on the server when I switch to my phone or a different computer.
+      </p>
+
+      <p>
+        <a href="https://github.com/cjjeakle/SmartSync">The project's code on GitHub.</a>
+      </p>
+    </div>
 </div>

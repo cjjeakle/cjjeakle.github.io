@@ -179,7 +179,7 @@ function setPingPongDifficulty(diff)
     else if (diff == mediumName)
     {
         lookaheadRate = 1.15;
-        aiPaddleSpeed = 115;
+        aiPaddleSpeed = 125;
         playerPaddleSpeed = 192;
         ballXSpeed = 192;
         ballYSpeed = 128;
@@ -187,10 +187,14 @@ function setPingPongDifficulty(diff)
     else if (diff == hardName)
     {
         lookaheadRate = 1.25;
-        aiPaddleSpeed = 130;
+        aiPaddleSpeed = 175;
         playerPaddleSpeed = 128;
         ballXSpeed = 256;
         ballYSpeed = 256;
+    }
+    else
+    {
+        throw "Invalid difficulty value: " + diff;
     }
 
     initialBallXSpeed = ballXSpeed;

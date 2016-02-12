@@ -58,8 +58,13 @@ layout: default
         Being <a href="https://www.goodreads.com/quotes/568877-i-choose-a-lazy-person-to-do-a-hard-job">lazy</a> at heart, I refuse to press the "refresh" button to sync my work before switching to a web mail interface or my phone.
       </p>
       <p>
-        After some investigation, I discovered a nifty API to access email mailboxes on my machine, listen for change events, and automatically invoke a sync.
-        Now I can run this app while using the mail app, and rest assured that all my changes are on the server when I switch to my phone or a different computer.
+        After some investigation, I discovered a nifty API to access email mailboxes on my machine, listen for change events, and automatically invoke a sync. 
+        I consumed the API using a Windows 10 universal app, 
+        as the <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.applicationmodel.email.aspx">ApplicationModel.Email namespace</a> 
+        is only available to UWP apps. The solution I created can launch the mail app, and immediately syncs local changes to the server. 
+      </p>
+      <p>
+        Now, so long as Smart Sync is running, I can rest assured my changes are on the server when I switch to my phone or a different computer.
       </p>
 
       <p>

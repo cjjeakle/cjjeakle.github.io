@@ -18,8 +18,13 @@ br {
     text-align: center;
 }
 
+.inline-header {
+    margin-bottom: 2rem;
+}
+
 .inline-header * {
     display: inline-block;
+    margin: 0 0 0 0;
 }
 
 .inline-header h4:after {

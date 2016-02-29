@@ -18,6 +18,14 @@ br {
     text-align: center;
 }
 
+.inline-header * {
+    display: inline-block;
+}
+
+.inline-header h5:before {
+    content:"\00a0 ~\00a0 ";
+}
+
 .min-width {
     display: inline-block;
 }
@@ -30,7 +38,6 @@ br {
     margin-top: 1em;
     margin-bottom: 1em;
 }
-
 
 
 /**

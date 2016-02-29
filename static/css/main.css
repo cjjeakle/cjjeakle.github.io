@@ -22,8 +22,8 @@ br {
     display: inline-block;
 }
 
-.inline-header h5:before {
-    content:", ";
+.inline-header h4:after {
+    content:",\00a0";
 }
 
 .min-width {

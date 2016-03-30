@@ -598,3 +598,10 @@ function togglePingPongPause()
         document.getElementById('pauseBtn').innerHTML = '&nbsp;Pause&nbsp;';
     }
 }
+
+
+/////////// Initialize the game ///////////
+
+
+createPingPong();
+setPingPongDifficulty('medium');

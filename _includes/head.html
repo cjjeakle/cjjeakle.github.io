@@ -8,11 +8,9 @@
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
 
   <!-- css libraries -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.min.css" media="all" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css" media="all" />
 
   <!-- css -->
-  <link href="{{ '/static/css/main.css' | prepend: site.baseurl }}" rel="stylesheet" type="text/css"/>
-  <!-- js -->
-  <script type="text/javascript" src="{{ '/static/js/main.js' | prepend: site.baseurl }}"> </script>
+  <link rel="stylesheet" href="{{ '/static/css/main.css' | prepend: site.baseurl }}" media="all"/>
 </head>

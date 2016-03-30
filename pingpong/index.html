@@ -3,8 +3,6 @@ title: Chris Jeakle | Ping Pong
 layout: default
 ---
 
-<script src="{{ '/static/js/requestAnimationFramePolyfill.js' | prepend: site.baseurl }}" type="text/javascript"></script>
-<script src="{{ '/static/js/pingPong.js' | prepend: site.baseurl }}" type="text/javascript"></script>
 <h3>Ping-Pong</h3>
 <div style="font-size: 90%; line-height: 125%;">
   <p>
@@ -35,8 +33,5 @@ layout: default
 <br/>
 <br/>
 <a href="{{ '/static/js/pingPong.js' | prepend: site.baseurl }}">Click here or view source to check out the implementation.</a>
-<script>
-  // Create the ping pong table after all required DOM nodes are loaded.
-  createPingPong();
-  setPingPongDifficulty('medium');
-</script>
+<script src="{{ '/static/js/requestAnimationFramePolyfill.js' | prepend: site.baseurl }}" type="text/javascript"></script>
+<script async defer src="{{ '/static/js/pingPong.js' | prepend: site.baseurl }}" type="text/javascript"></script>

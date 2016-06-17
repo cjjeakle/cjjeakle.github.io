@@ -33,9 +33,15 @@
   border-right: 1px solid;
 }
 
-.table input {
+/*
+Input type "tel" is used as a hack, as it avoids the cumbersome WebKit number input UI.
+It also invokes a convenient numbers only input on most smart phones.
+*/
+.table input[type="tel"],
+.table input[type="number"] {
   width: 100%; 
   height: 100%;
-  border: 0px;
-  margin: 0px;
+  border: 0;
+  margin: 0;
+  padding: 0;
 }

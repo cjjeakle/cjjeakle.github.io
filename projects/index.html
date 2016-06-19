@@ -5,108 +5,132 @@ layout: default
 
 <div>
   <h3>My Projects</h3>
-    <div class="row">
-      <div class="inline-header"><h4><a href="http://www.nouncaptcha.com">nouncaptcha</a></h4><h5>started in 2014</h5></div>
 
-      <p>
-        Nouncaptcha was created for my undergraduate honor's thesis requirement. 
-        It was an effort to create an alternative to text based CAPTCHAs, such as reCAPTCHA, and was made with modern internet-connected devices in mind.
-      </p>
-      <p>
-        The CAPTCHA was designed to be easy to use with either a keyboard and mouse, or with just a touchscreen.
-        Creating a theoretically secure CAPTCHA with such design constraints proved to be an enthralling challenge!
-      </p>
-      
-      <p>
-        <a href="https://github.com/cjjeakle/nouncaptcha">View the project's code on GitHub.</a>
-        <br/>
-        <span><a href="http://deepblue.lib.umich.edu/handle/2027.42/107736">My undergraduate thesis on nouncaptcha.</a>&nbsp;</span>
-        <span>(<a href="http://deepblue.lib.umich.edu/bitstream/handle/2027.42/107736/cjjeakle.pdf">direct link to the pdf</a>)</span>
-      </p>
+  <p>
+    Each project is listed in chronological order by start date.
+    <br/>
+    (I like to think software is never complete, so there are no end dates)
+  </p>
+  
+  <div class="row">
+    <div id="top-three-picks">
+      <h5>My top three most interesting picks:</h5>
+      <ol>
+        <li><a href="#nouncaptcha">NounCaptcha, created in 2014 for my undergraduate senior thesis.</a></li>
+        <li><a href="#rebalancecalc">Rebalance Calc, created in 2016 to help me (and hopefully others) with retirement investments.</a></li>
+        <li>
+          <a href="#traffic-tool">Traffic Tool, created in 2016 to make traffic a bit more bearable.</a> 
+          <br/>
+          (The Traffic Tool project didn't quite work out, but I found building and iterating on it quite fun.)
+        </li>
+      </ol>
     </div>
+  </div>
 
-    <div class="row">
-      <div class="row inline-header"><h4><a href="http://www.rebalancecalc.com">Rebalance Calc</a></h4><h5>started in 2016</h5></div>
+  <p class="center">---</p>
 
-      <p>
-        Rebalance Calc is a tool to distribute a desired asset allocation among taxable and tax-advantaged accounts. 
-        It is designed to optimize for <a href="https://www.bogleheads.org/wiki/Principles_of_tax-efficient_fund_placement">tax efficiency</a>. 
-        I originally built a similar tool using excel, but found myself missing the ability to program my solution in a familiar language. 
-        I also wanted the ability to separate data from presentation (my spreadsheet had quickly became a confusing mess with cells containing intermediate state).
-      </p>
-      <p>
-        After some thought, I felt a simple web app could address my needs, and potentially the needs of many others. 
-        I built the site, and have found it quite useful for my fairly novice investing use case.
-      </p>
+  <div class="row">
+    <div class="inline-header" id="nouncaptcha"><h4><a href="http://www.nouncaptcha.com">NounCaptcha</a></h4><h5>started in 2014</h5></div>
 
-      <p>
-        <a href="https://github.com/cjjeakle/rebalance-calc">View the project's code on GitHub.</a>
-      </p>
-    </div>
+    <p>
+      Nouncaptcha was created for my undergraduate honor's thesis requirement. 
+      It was an effort to create an alternative to text based CAPTCHAs, such as reCAPTCHA, and was made with modern internet-connected devices in mind.
+    </p>
+    <p>
+      The CAPTCHA was designed to be easy to use with either a keyboard and mouse, or with just a touchscreen.
+      Creating a theoretically secure CAPTCHA with such design constraints proved to be an enthralling challenge!
+    </p>
+    
+    <p>
+      <a href="https://github.com/cjjeakle/nouncaptcha">View the project's code on GitHub.</a>
+      <br/>
+      <span><a href="http://deepblue.lib.umich.edu/handle/2027.42/107736">My undergraduate thesis on NounCaptcha.</a>&nbsp;</span>
+      <span>(<a href="http://deepblue.lib.umich.edu/bitstream/handle/2027.42/107736/cjjeakle.pdf">direct link to the pdf</a>)</span>
+    </p>
+  </div>
 
-    <div class="row">
-      <div class="row inline-header"><h4>Smart Sync</h4><h5>started in 2015</h5></div>
+  <div class="row">
+    <div class="row inline-header" id="SmartSync"><h4>Smart Sync</h4><h5>started in 2015</h5></div>
 
-      <p>
-        I created Smart Sync after getting frustrated waiting for the built-in Windows 10 mail app to sync changes to the server. 
-        After some investigation, I discovered "triage" events (eg: marking as read, moving to a folder, etc) flush to the server on a schedule, and do not propagate immediately.
-        Being <a href="https://www.goodreads.com/quotes/568877-i-choose-a-lazy-person-to-do-a-hard-job">lazy</a> at heart, I refuse to press the "refresh" button to sync my work before switching to a web mail interface or my phone.
-      </p>
-      <p>
-        After some investigation, I discovered a nifty API to access email mailboxes on my machine, listen for change events, and automatically invoke a sync. 
-        I consumed the API using a Windows 10 universal app, 
-        as the <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.applicationmodel.email.aspx">ApplicationModel.Email namespace</a> 
-        is only available to UWP apps. The solution I created can launch the mail app, and immediately syncs local changes to the server. 
-      </p>
-      <p>
-        Now I can rest assured knowing my email is synced when I switch to my phone or a different computer.
-      </p>
+    <p>
+      I created Smart Sync after getting frustrated waiting for the built-in Windows 10 mail app to sync changes to the server. 
+      After some investigation, I discovered "triage" events (eg: marking as read, moving to a folder, etc) flush to the server on a schedule, and do not propagate immediately.
+      Being <a href="https://www.goodreads.com/quotes/568877-i-choose-a-lazy-person-to-do-a-hard-job">lazy</a> at heart, I refuse to press the "refresh" button to sync my work before switching to a web mail interface or my phone.
+    </p>
+    <p>
+      After some investigation, I discovered a nifty API to access email mailboxes on my machine, listen for change events, and automatically invoke a sync. 
+      I consumed the API using a Windows 10 universal app, 
+      as the <a href="https://msdn.microsoft.com/en-us/library/windows/apps/windows.applicationmodel.email.aspx">ApplicationModel.Email namespace</a> 
+      is only available to UWP apps. The solution I created can launch the mail app, and immediately syncs local changes to the server. 
+    </p>
+    <p>
+      Now I can rest assured knowing my email is synced when I switch to my phone or a different computer.
+    </p>
 
-      <p>
-        <a href="https://github.com/cjjeakle/SmartSync">View the project's code on GitHub.</a>
-      </p>
-    </div>
+    <p>
+      <a href="https://github.com/cjjeakle/SmartSync">View the project's code on GitHub.</a>
+    </p>
+  </div>
 
-    <div class="row">
-      <div class="row inline-header"><h4>Dev Box Setup Scripts</h4><h5>started in 2016</h5></div>
+  <div class="row">
+    <div class="row inline-header" id="rebalancecalc"><h4><a href="http://www.rebalancecalc.com">Rebalance Calc</a></h4><h5>started in 2016</h5></div>
 
-      <p>
-        I generally work on small projects in Ubuntu VMs, and have found it tedious to get these machines set up exactly how I like by hand. 
-        This task was a perfect candidate for automation, so I created a series of scripts and pushed them to GitHub.
-        Now it's quick and easy to install the software packages I rely on, to set up git and GitHub public key auth, and to properly configure an SSH server (it's as simple as ctrl-c & ctrl-v).
-      </p>
-      <p>
-        These scripts simplify my life by making it easy to get an Ubuntu VM to a known good state. 
-        They also guarantee my production and development environments have similar, if not identical (where appropriate), configurations!
-      </p>
+    <p>
+      Rebalance Calc is a tool to distribute a desired asset allocation among taxable and tax-advantaged accounts. 
+      It is designed to optimize for <a href="https://www.bogleheads.org/wiki/Principles_of_tax-efficient_fund_placement">tax efficiency</a>. 
+      I originally built a similar tool using excel, but found myself missing the ability to program my solution in a familiar language. 
+      I also wanted the ability to separate data from presentation (my spreadsheet had quickly became a confusing mess with cells containing intermediate state).
+    </p>
+    <p>
+      After some thought, I felt a simple web app could address my needs, and potentially the needs of many others. 
+      I built the site, and have found it quite useful for my fairly novice investing use case.
+    </p>
 
-      <p>
-        <a href="https://github.com/cjjeakle/devbox-setup">View the project's code on GitHub.</a>
-      </p>
-    </div>
+    <p>
+      <a href="https://github.com/cjjeakle/rebalance-calc">View the project's code on GitHub.</a>
+    </p>
+  </div>
 
-    <div class="row">
-      <div class="row inline-header"><h4><a href="https://cjjeakle.github.io/traffic-tool">Traffic Tool</a></h4><h5>started in 2016</h5></div>
+  <div class="row">
+    <div class="row inline-header" id="devbox-setup"><h4>Dev Box Setup Scripts</h4><h5>started in 2016</h5></div>
 
-      <p>
-        This tool calculates a moving average of your speed, with a goal of giving you a ballpark target speed to avoid slowing down in heavy traffic.
-      </p>
-      <p>
-        I designed this tool after reading through a site likening traffic slow-downs to compression in a longitudinal wave.
-        The comparison made incredible sense.
-        Based on that model, one can travel at or below their average speed across a window of traffic and smooth out the more compressed sections.
-      </p>
-      <p>
-        Unfortunately, it looks like this project did not work as well as I had hoped.
-        In heavy stop-and-go traffic it's possible the idea would work, but in more typical traffic with sporadic slowdowns your average speed changes too drastically across time intervals, and even between lanes.
-        The README on GitHub has a more detailed analysis and some additional considerations for why this tool wasn't as practical as I'd have liked.
-      </p>
-      <p>
-        Despite not working as well as I'd hoped, I don't consider this project a failure. I had a ton of fun building this and experimenting with improving my commute, and that's what makes a project great in my mind!
-      </p>
+    <p>
+      I generally work on small projects in Ubuntu VMs, and have found it tedious to get these machines set up exactly how I like by hand. 
+      This task was a perfect candidate for automation, so I created a series of scripts and pushed them to GitHub.
+      Now it's quick and easy to install the software packages I rely on, to set up git and GitHub public key auth, and to properly configure an SSH server (it's as simple as ctrl-c & ctrl-v).
+    </p>
+    <p>
+      These scripts simplify my life by making it easy to get an Ubuntu VM to a known good state. 
+      They also guarantee my production and development environments have similar, if not identical (where appropriate), configurations!
+    </p>
 
-      <p>
-        <a href="https://github.com/cjjeakle/traffic-tool">View the project's code on GitHub.</a>
-      </p>
-    </div>
+    <p>
+      <a href="https://github.com/cjjeakle/devbox-setup">View the project's code on GitHub.</a>
+    </p>
+  </div>
+
+  <div class="row">
+    <div class="row inline-header" id="traffic-tool"><h4><a href="https://cjjeakle.github.io/traffic-tool">Traffic Tool</a></h4><h5>started in 2016</h5></div>
+
+    <p>
+      This tool calculates a moving average of your speed, with a goal of giving you a ballpark target speed to avoid slowing down in heavy traffic.
+    </p>
+    <p>
+      I designed this tool after reading through a site likening traffic slow-downs to compression in a longitudinal wave.
+      The comparison made incredible sense.
+      Based on that model, one can travel at or below their average speed across a window of traffic and smooth out the more compressed sections.
+    </p>
+    <p>
+      Unfortunately, it looks like this project did not work as well as I had hoped.
+      In heavy stop-and-go traffic it's possible the idea would work, but in more typical traffic with sporadic slowdowns your average speed changes too drastically across time intervals, and even between lanes.
+      The README on GitHub has a more detailed analysis and some additional considerations for why this tool wasn't as practical as I'd have liked.
+    </p>
+    <p>
+      Despite not working as well as I'd hoped, I don't consider this project a failure. I had a ton of fun building this and experimenting with improving my commute, and that's what makes a project great in my mind!
+    </p>
+
+    <p>
+      <a href="https://github.com/cjjeakle/traffic-tool">View the project's code on GitHub.</a>
+    </p>
+  </div>
 </div>

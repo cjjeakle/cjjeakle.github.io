@@ -57,6 +57,7 @@ br {
 #headerImg {
     display: inline;
     position: relative;
+    margin-right: 1em;
 }
 
 #headerImg img {
@@ -81,6 +82,7 @@ br {
 }
 
 #headerDetails {
+    margin-left: .25em;
     line-height: 1.6em;
 }
 

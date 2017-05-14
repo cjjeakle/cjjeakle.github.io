@@ -1,10 +1,10 @@
 # cjjeakle.github.io
 
-##About:
+## About:
 My homepage. <br/>
 Check it out at [www.chrisjeakle.com](http://www.chrisjeakle.com).
 
-##To Get Set Up:
+## To Get Set Up:
 1. Install or update [RVM](https://rvm.io/)
   - ```gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3```
   - ```\curl -sSL https://get.rvm.io | bash -s stable```<br/>
@@ -21,5 +21,5 @@ Check it out at [www.chrisjeakle.com](http://www.chrisjeakle.com).
 5. Start up the site!
   - ```bundle exec jekyll serve```
 
-##To Develop and Debug:
+## To Develop and Debug:
 Run: ```bundle exec jekyll serve```

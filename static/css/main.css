@@ -31,6 +31,10 @@ br {
     content:",\00a0";
 }
 
+.description {
+	margin-left: 2em;
+}
+
 .min-width {
     display: inline-block;
 }

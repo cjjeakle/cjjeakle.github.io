@@ -24,7 +24,29 @@ layout: default
   </div>
 
   <p><hr /></p>
- 
+
+  <div class="row">
+    <div class="row inline-header" id="gdax-automation"><h4>GDAX Automation Scripts</h4><h5>started in 2018</h5></div>
+
+    <div class="row description">
+      <p>
+        After sitting out the late-2014 and late-2017 Bitcoin crazes, I felt some serious FOMO. I ended up buying a small amount of Bitcoin at an all-time high in December 2017, and concluded that I need a more rigorous strategy if I want to give this a shot.
+      </p>
+      <p>
+        I set up a GDAX account (an investor-oriented platform made by Coinbase), and got to work learning the API. My plan was to build and maintain a market cap weighted portfolio of all the products GDAX supports, aiming to recreate something like VTI or SPY for crypto-currencies. I also aimed to implement a dollar-cost average buying strategy, to avoid going all-in at a less than ideal price.
+      </p>
+      <p>
+        My GDAX automation scripts take the emotion out of crypto-currency speculation and keep things simple. I wrote code to determine the relative market cap of each GDAX product, determine my dollar-value balance for each product, and perform buys that keep my asset allocation on target. I then scheduled my buy script using crontab and Azure functions. Now I only need to manage my GDAX balance, as I'd rather not automate bank transfers.
+      </p>
+      <p>
+        Disclaimer: I'm very aware crypto-currencies are highly speculative and coin market cap is a fairly fraught metric. This project was primarily built for fun, and as a way to put only a couple dollars a month to work.
+      </p>
+      <p>
+        <a href="https://github.com/cjjeakle/gdax-automation">View this project's code on GitHub.</a>
+      </p>
+    </div>
+  </div>
+
   <div class="row">
     <div class="row inline-header" id="traffic-tool"><h4><a href="https://cjjeakle.github.io/traffic-tool">Traffic Tool</a></h4><h5>started in 2016</h5></div>
 
@@ -34,9 +56,8 @@ layout: default
         <br/>
         It didn't work as well as I had hoped, but I had a ton of fun trying to improve my commute.
       </p>
-
       <p>
-        <a href="https://github.com/cjjeakle/traffic-tool">View the project's code on GitHub.</a>
+        <a href="https://github.com/cjjeakle/traffic-tool">View this project's code on GitHub.</a>
       </p>
     </div>
   </div>
@@ -46,15 +67,14 @@ layout: default
 
     <div class="row description">
       <p>
-        I have created a fair number of Ubuntu installs and Windows Subsystem for Linux instances for projects and experiments. As a consequence, I've spent a fair amount of time setting those machines up.
+        I've created a fair number of Ubuntu and Windows Subsystem for Linux instances for projects and experiments. As a consequence, I've spent a lot of time getting machines set up.
       </p>
       <p>
         In an effort to simplify things, I created a series of configuration scripts and pushed them to GitHub.
         Now it's quick and easy to install the software packages I rely on, set-up git with GitHub public key authentication, and to properly configure an SSH server.
       </p>
-
       <p>
-        <a href="https://github.com/cjjeakle/devbox-setup">View the project's code on GitHub.</a>
+        <a href="https://github.com/cjjeakle/devbox-setup">View this project's code on GitHub.</a>
       </p>
     </div>
   </div>
@@ -75,9 +95,8 @@ layout: default
         After some thought, I felt a simple web app could address my needs, and potentially the needs of many others. 
         I built the site, and have found it very useful while annually rebalancing my investment accounts.
       </p>
-
       <p>
-        <a href="https://github.com/cjjeakle/rebalance-calc">View the project's code on GitHub.</a>
+        <a href="https://github.com/cjjeakle/rebalance-calc">View this project's code on GitHub.</a>
       </p>
     </div>
   </div>
@@ -98,9 +117,8 @@ layout: default
       <p>
         Being <a href="https://www.goodreads.com/quotes/568877-i-choose-a-lazy-person-to-do-a-hard-job">lazy</a> at heart, I refuse to press the "refresh" button to sync my changes before switching to a web mail interface or my phone. Now I can rest assured knowing my email is synced when I switch to my phone, webmail, or a different computer.
       </p>
-
       <p>
-        <a href="https://github.com/cjjeakle/SmartSync">View the project's code on GitHub.</a>
+        <a href="https://github.com/cjjeakle/SmartSync">View this project's code on GitHub.</a>
       </p>
     </div>
   </div>
@@ -118,9 +136,8 @@ layout: default
         Nouncaptcha's design makes it easy to use with either a keyboard and mouse, or with just a touchscreen.
         Creating a theoretically secure CAPTCHA with such a widely accessible design proved to be an enthralling challenge!
       </p>
-      
       <p>
-        <a href="https://github.com/cjjeakle/nouncaptcha">View the project's code on GitHub.</a>
+        <a href="https://github.com/cjjeakle/nouncaptcha">View this project's code on GitHub.</a>
         <br/>
         <span><a href="http://deepblue.lib.umich.edu/handle/2027.42/107736">My undergraduate thesis on Nouncaptcha.</a>&nbsp;</span>
         <span>(<a href="http://deepblue.lib.umich.edu/bitstream/handle/2027.42/107736/cjjeakle.pdf">direct link to the pdf</a>)</span>

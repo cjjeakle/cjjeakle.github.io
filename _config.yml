@@ -11,7 +11,3 @@ markdown: kramdown
 
 # Compilation settings
 permalink: pretty
-
-# Additional plugins
-gems:
-  - jekyll-sitemap

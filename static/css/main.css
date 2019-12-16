@@ -59,30 +59,21 @@ br {
 }
 
 #headerImg {
-    display: inline;
-    position: relative;
-    margin-right: 1em;
+    text-align: left;
 }
 
 #headerImg img {
-    height: 6em;
-    position: absolute;
+    height: 7em;
 }
 
 #headerText {
-    display: inline-block;
     float: bottom;
     text-align: left;
-    height:auto;
-    width: auto;
-    margin-left: 6em;
-    margin-top: 1em;
-    margin-bottom: 0em;
 }
 
 #headerText h2{
-     line-height: 0%;
-     white-space: nowrap;
+    margin-bottom: 0;
+    white-space: nowrap;
 }
 
 #headerDetails {

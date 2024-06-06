@@ -35,7 +35,7 @@ function loadBoard(board) {
     for (i = 0; i < 9; i++) {
         for (j = 0; j < 9; j++) {
             if (board[i][j] != null && board[i][j] != 0) {
-                document.getElementById('sq'+(i*9+j)).value = board[i][j];
+                document.getElementById("sq"+(i*9+j)).value = board[i][j];
             }
         }
     }
@@ -44,31 +44,38 @@ function loadBoard(board) {
 function clearBoard() {
     for (i = 0; i < 9; i++) {
         for (j = 0; j < 9; j++) {
-            document.getElementById('sq'+(i*9+j)).value = "";
+            document.getElementById("sq"+(i*9+j)).value = "";
         }
     }
-    document.getElementById('sudokuInfo').innerHTML = "<br/>";
+    document.getElementById("sudokuInfo").innerHTML = "<br/>";
 }
 
 function attemptSolve() {
-    document.getElementById('sudokuInfo').innerHTML = '<br>';
+    document.getElementById("sudokuInfo").innerHTML = "<br>";
 
     try {
         var board = populateBoardBuffer();
-        validBoard(board);
-    } catch(err) {
-        document.getElementById('sudokuInfo').innerHTML = err + '<br/><br/>';
+    } catch (err) {
+        document.getElementById("sudokuInfo").innerHTML = err + "<br/><br/>";
+    }
+    if (!validBoard(board)) {
+        document.getElementById("sudokuInfo").innerHTML = "There is a conflict on the board.<br/><br/>";
         return;
     }
     
-    document.getElementById('sudokuInfo').innerHTML = 'Working...<br/><br/>';
+    document.getElementById("sudokuInfo").innerHTML = "Working...<br/><br/>";
 
     solve(board);
 
-    for(var i = 0; i < 81; i++) {
-        document.getElementById('sq'+i).value = board[i];
+    if (!validBoard(board)) {
+        document.getElementById("sudokuInfo").innerHTML = "Failed to solve the Sudoku." + "<br/><br/>";
+        return;
     }
-    document.getElementById('sudokuInfo').innerHTML = 'Done!<br/><br/>';
+
+    for(var i = 0; i < 81; i++) {
+        document.getElementById("sq"+i).value = board[i];
+    }
+    document.getElementById("sudokuInfo").innerHTML = "Done!<br/><br/>";
 }
 
 
@@ -85,17 +92,17 @@ function populateBoardBuffer() {
     var count = 0;
 
     for(idx = 0; idx < 81; idx++) {
-        board[idx] = document.getElementById('sq'+idx).value;
+        board[idx] = document.getElementById("sq"+idx).value;
 
         if(!isValidInput(board[idx])) {
-            throw('Invalid Board State (only use numbers between 1 and 9, or blanks)');
+            throw("Invalid Board State (only use numbers between 1 and 9, or blanks)");
         } else if(!isBlank(board[idx])) {
             count++;
         }
     }
 
     if(count < 17) {
-        throw ('Not Enough Givens (min 17)');
+        throw ("Not Enough Givens (min 17)");
     }
     return board;
 }
@@ -105,20 +112,21 @@ function isValidInput(square) {
 }
 
 function isBlank(square) {
-    return square == '';
+    return square == "";
 }
 
 function validBoard(board) {
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            if (board[i*9+j] != '' &&
+            if (board[i*9+j] != "" &&
                 (checkRowForNum(board, i, j, board[i*9+j]) ||
                 checkColForNum(board, i, j, board[i*9+j]) ||
                 checkSubBoardForNum(board, i, j, board[i*9+j]))) {
-                throw ('There is a conflict on the board');
+                return false;
             }
         }
     }
+    return true;
 }
 
 function checkRowForNum(board, row, col, val) {
@@ -196,7 +204,7 @@ function solve(board) {
     var puzzle = new Array();
     for(var i = 0; i < 81; i++) {
         puzzle[i] = {};
-        if(board[i] != '') {
+        if(board[i] != "") {
             puzzle[i].state = new Array(null, false, false, false, false, false, false, false, false, false);
             puzzle[i].state[board[i]] = true;
             puzzle[i].solution = board[i];

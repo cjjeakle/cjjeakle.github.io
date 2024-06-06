@@ -267,12 +267,13 @@ function applyOnlySolution(square) {
 function depthFirstSearch(solutionsFound, puzzle) {
     var stack = new Array();
     stack.push({solutionsFound: solutionsFound, puzzle: puzzle});
-    for(;;) {
+    while(stack.length > 0) {
         var tempPuzzle = stack.pop();
         for(var i = 0; i < 81; i++) {
             for(var j = 1; j < 10; j++) {
                 var  workingSet = JSON.parse(JSON.stringify(tempPuzzle));
                 if(workingSet.puzzle[i].state[j]) {
+                    // Make a guess.
                     workingSet.puzzle[i].solution = j;
                     workingSet.puzzle[i].state = new Array(null, false, false, false, false, false, false, false, false, false);
                     workingSet.puzzle[i].state[j] = true;
@@ -280,14 +281,18 @@ function depthFirstSearch(solutionsFound, puzzle) {
                     workingSet.puzzle[i].justSolved = true;
                     workingSet.solutionsFound.val++;
 
+                    // Check if the guess was valid.
                     var conflictErrorOccured = {val: false};
                     while(removeConflicts(workingSet.solutionsFound, workingSet.puzzle, conflictErrorOccured));
-                    
-                    if(workingSet.solutionsFound.val == 81) {
+
+                    if (!conflictErrorOccured.val && workingSet.solutionsFound.val == 81) {
+                        // We're done!
                         return workingSet.puzzle;
-                    } else if (!conflictErrorOccured) {
+                    } else if (!conflictErrorOccured.val) {
+                        // Keep pursuing this branch.
                         stack.push(workingSet);
-                        break;
+                    } else {
+                        // Otherwise, move on to the next branch.
                     }
                 }
             }

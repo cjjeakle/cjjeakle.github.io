@@ -6,7 +6,19 @@
 *************************UI/Utility Functions**************************
 */
 
-var evilExample = [[ 0,0,0, 6,0,0, 0,0,1], 
+var extraEvilExample = [[0,4,0, 3,5,0, 0,1,8],
+                        [0,2,0, 7,4,0, 0,0,0], 
+                        [0,0,0, 0,0,0, 0,4,0],
+
+                        [0,0,3, 0,6,0, 0,0,1],
+                        [5,6,0, 0,3,0, 0,7,0],
+                        [1,0,0, 4,0,0, 0,0,0],
+
+                        [0,3,0, 2,0,0, 0,6,0],
+                        [0,0,7, 0,0,0, 0,0,9],
+                        [0,0,0, 6,8,0, 0,0,0]];
+
+var evilExample =  [[0,0,0, 6,0,0, 0,0,1], 
                     [7,0,0, 0,9,4, 5,0,0], 
                     [4,0,0, 0,0,2, 0,0,0], 
 
@@ -18,7 +30,7 @@ var evilExample = [[ 0,0,0, 6,0,0, 0,0,1],
                     [0,0,3, 7,6,0, 0,0,8], 
                     [9,0,0, 0,0,3, 0,0,0]];
 
-var easyExample = [[ 3,0,0, 9,0,0, 7,0,1], 
+var easyExample =  [[3,0,0, 9,0,0, 7,0,1], 
                     [1,0,0, 0,0,4, 5,0,9], 
                     [9,8,4, 0,0,0, 0,0,0], 
 
@@ -34,7 +46,7 @@ function loadBoard(board) {
     clearBoard();
     for (i = 0; i < 9; i++) {
         for (j = 0; j < 9; j++) {
-            if (board[i][j] != null && board[i][j] != 0) {
+            if (board[i][j] != null && board[i][j] != "") {
                 document.getElementById("sq"+(i*9+j)).value = board[i][j];
             }
         }
@@ -57,12 +69,13 @@ function attemptSolve() {
         var board = populateBoardBuffer();
     } catch (err) {
         document.getElementById("sudokuInfo").innerHTML = err + "<br/><br/>";
+        return;
     }
     if (!validBoard(board)) {
         document.getElementById("sudokuInfo").innerHTML = "There is a conflict on the board.<br/><br/>";
         return;
     }
-    
+
     document.getElementById("sudokuInfo").innerHTML = "Working...<br/><br/>";
 
     solve(board);
@@ -92,11 +105,13 @@ function populateBoardBuffer() {
     var count = 0;
 
     for(idx = 0; idx < 81; idx++) {
-        board[idx] = document.getElementById("sq"+idx).value;
+        let square = parseInt(document.getElementById("sq"+idx).value);
+        if (!(square >= 1 || square <= 9)) {
+            square = "";
+        }
+        board[idx] = square;
 
-        if(!isValidInput(board[idx])) {
-            throw("Invalid Board State (only use numbers between 1 and 9, or blanks)");
-        } else if(!isBlank(board[idx])) {
+        if(!isBlank(board[idx])) {
             count++;
         }
     }
@@ -107,10 +122,6 @@ function populateBoardBuffer() {
     return board;
 }
 
-function isValidInput(square) {
-    return isBlank(square) || (square > 0 && square <= 9);
-}
-
 function isBlank(square) {
     return square == "";
 }
@@ -118,10 +129,16 @@ function isBlank(square) {
 function validBoard(board) {
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            if (board[i*9+j] != "" &&
-                (checkRowForNum(board, i, j, board[i*9+j]) ||
-                checkColForNum(board, i, j, board[i*9+j]) ||
-                checkSubBoardForNum(board, i, j, board[i*9+j]))) {
+            let square = board[i*9+j];
+            let evaluate_square = square >= 1 && square <= 9;
+            let valid_square = (evaluate_square || square == "");
+            if (!valid_square) { 
+                return false;
+            }
+            if (evaluate_square &&
+                (checkRowForNum(board, i, j, square) ||
+                checkColForNum(board, i, j, square) ||
+                checkSubBoardForNum(board, i, j, square))) {
                 return false;
             }
         }
@@ -214,39 +231,53 @@ function solve(board) {
         }
         else {
             puzzle[i].state = new Array(null, true, true, true, true, true, true, true, true, true);
-            puzzle[i].solution = null;
+            puzzle[i].solution = "";
             puzzle[i].count = 9;
         }
     }
 
     while(removeConflicts(solutionsFound, puzzle, {}));
 
+    for (i = 0; i < 81; i++) {
+        board[i] = puzzle[i].solution;
+    }
+
+    if (!validBoard(board)) {
+        throw "Invalid board state after standard solver loop!";
+    }
+
     if(solutionsFound.val != 81) {
-        puzzle = depthFirstSearch(solutionsFound, puzzle)
+        result = branchAndBoundSearch(solutionsFound.val, puzzle);
+        solutionsFound.val = result.solutionsFound;
+        puzzle = result.puzzle;
     }
 
     for (i = 0; i < 81; i++) {
         board[i] = puzzle[i].solution;
     }
+
+    if (!validBoard(board)) {
+        throw "Invalid board state after guess-and-check solver loop!";
+    }
 }
 
-function removeConflicts(solutionsFound, puzzle, conflictErrorOccured) {
+function removeConflicts(solutionsFound, puzzle, conflictErrorOccurred) {
     var anyChangeMade = false;
     for(var i = 0; i < 81; i++) {
         if(puzzle[i].justSolved) {
             peers[i].forEach(function(peer){
-                if(puzzle[peer].solution == puzzle[i].solution) {
-                    conflictErrorOccured.val = true;
-                    return false;
-                }
+                // Remove this solution as a possibility for peers.
                 if(puzzle[peer].state[puzzle[i].solution]) {
                     puzzle[peer].state[puzzle[i].solution] = false;
                     puzzle[peer].count--;
                     if(puzzle[peer].count == 1) {
                         applyOnlySolution(puzzle[peer]);
                         solutionsFound.val++;
+                        anyChangeMade = true;
+                    } else if (puzzle[peer].count == 0) {
+                        // If this peer can't be solved, something is wrong.
+                        conflictErrorOccurred.val = true;
                     }
-                    anyChangeMade = true;
                 }
             });
             puzzle[i].justSolved = false;
@@ -264,38 +295,67 @@ function applyOnlySolution(square) {
     }
 }
 
-function depthFirstSearch(solutionsFound, puzzle) {
-    var stack = new Array();
-    stack.push({solutionsFound: solutionsFound, puzzle: puzzle});
-    while(stack.length > 0) {
-        var tempPuzzle = stack.pop();
-        for(var i = 0; i < 81; i++) {
-            for(var j = 1; j < 10; j++) {
-                var  workingSet = JSON.parse(JSON.stringify(tempPuzzle));
-                if(workingSet.puzzle[i].state[j]) {
-                    // Make a guess.
-                    workingSet.puzzle[i].solution = j;
-                    workingSet.puzzle[i].state = new Array(null, false, false, false, false, false, false, false, false, false);
-                    workingSet.puzzle[i].state[j] = true;
-                    workingSet.puzzle[i].count = 1;
-                    workingSet.puzzle[i].justSolved = true;
-                    workingSet.solutionsFound.val++;
+function branchAndBoundSearch(solutionsFound, puzzle) {
+    let queue = new Array();
+    queue.push({
+        solutionsFound: solutionsFound,
+        puzzle: puzzle,
+        i: 0
+    });
+    while (queue.length > 0 ) {
+        // Get the next state to consider.
+        let cur = queue.pop();
+        let solutionsFound = cur.solutionsFound;
+        let puzzle = cur.puzzle;
+        let i = cur.i;
 
-                    // Check if the guess was valid.
-                    var conflictErrorOccured = {val: false};
-                    while(removeConflicts(workingSet.solutionsFound, workingSet.puzzle, conflictErrorOccured));
+        // Scan forward to the next unsolved square.
+        while (puzzle[i].solution >= 1 && puzzle[i].solution <= 9) {
+            ++i;
+        }
 
-                    if (!conflictErrorOccured.val && workingSet.solutionsFound.val == 81) {
-                        // We're done!
-                        return workingSet.puzzle;
-                    } else if (!conflictErrorOccured.val) {
-                        // Keep pursuing this branch.
-                        stack.push(workingSet);
-                    } else {
-                        // Otherwise, move on to the next branch.
-                    }
-                }
+        // Make some guesses.
+        for (var j = 1; j < 10; j++) {
+            // Skip possibilities that have already been ruled out.
+            if (!puzzle[i].state[j]) {
+                continue;
             }
+
+            // Clone the current state.
+            let guess_puzzle = JSON.parse(JSON.stringify(puzzle));
+            let guess_solutionsFound = { val: solutionsFound };
+
+            // Make a guess.
+            guess_puzzle[i].solution = j;
+            guess_puzzle[i].state = new Array(null, false, false, false, false, false, false, false, false, false);
+            guess_puzzle[i].state[j] = true;
+            guess_puzzle[i].count = 1;
+            guess_puzzle[i].justSolved = true;
+            guess_solutionsFound.val++;
+
+            // Propagate constraints (repeatedly), stop if it turns out the guess put us in an invalid state.
+            var conflictErrorOccurred = {val: false};
+            while(removeConflicts(guess_solutionsFound, guess_puzzle, conflictErrorOccurred));
+            // If there's any conflicts, don't pursue this guess.
+            if (conflictErrorOccurred.val) {
+                continue;
+            }
+
+            // Check if we're done.
+            if (guess_solutionsFound.val == 81) {
+                return {
+                    solutionsFound: guess_solutionsFound.val,
+                    puzzle: guess_puzzle
+                };
+            }
+
+            // If we're not done yet, keep pursuing this branch.
+            queue.push({
+                solutionsFound: guess_solutionsFound.val,
+                puzzle: guess_puzzle,
+                i: i+1
+            });
         }
     }
+    throw "No solution found after an exhaustive search!";
 }
